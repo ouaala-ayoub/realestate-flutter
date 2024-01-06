@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "714414033482",
+    "project_id": "realestate-14af5",
+    "storage_bucket": "realestate-14af5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:714414033482:android:43b859932a45c07d99b4b3",
+        "android_client_info": {
+          "package_name": "com.flutter.realestate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "714414033482-o4hruu9fegr9972ml9fi3cfrnva66pl8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.flutter.realestate",
+            "certificate_hash": "a3fc95cbb8f7f82685c3b2a23f5e33b638697ef9"
+          }
+        },
+        {
+          "client_id": "714414033482-sd39ihttit3sii0604f5rq1h3akgbtsr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMz6ZUNhpinxe7LIDIeH8KwHPV5jmLuUY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "714414033482-sd39ihttit3sii0604f5rq1h3akgbtsr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "714414033482-hhvjupsr1qfg9m0jibbt94g77le34s7m.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.realestate.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
