@@ -44,38 +44,42 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCSwUrQ_dDAWlINl0sWLsU04dEdHG2NaO8',
-    appId: '1:714414033482:web:ac7e73f73bcba36199b4b3',
-    messagingSenderId: '714414033482',
-    projectId: 'realestate-14af5',
-    authDomain: 'realestate-14af5.firebaseapp.com',
-    storageBucket: 'realestate-14af5.appspot.com',
-    measurementId: 'G-MVPJNCDB4Y',
+    apiKey: 'AIzaSyCg33j42JjEpf-70AG2isKln_QkJjDa_v8',
+    appId: '1:194326811955:web:a94d5572b571f8aa9f1a46',
+    messagingSenderId: '194326811955',
+    projectId: 'realestate-d9b12',
+    authDomain: 'realestate-d9b12.firebaseapp.com',
+    storageBucket: 'realestate-d9b12.appspot.com',
+    measurementId: 'G-E69GJC1L1H',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDMz6ZUNhpinxe7LIDIeH8KwHPV5jmLuUY',
-    appId: '1:714414033482:android:43b859932a45c07d99b4b3',
-    messagingSenderId: '714414033482',
-    projectId: 'realestate-14af5',
-    storageBucket: 'realestate-14af5.appspot.com',
+    apiKey: 'AIzaSyClA90xeElp5-gYxidlZ2oHYu90uGjwnxo',
+    appId: '1:194326811955:android:edadc285e2235d529f1a46',
+    messagingSenderId: '194326811955',
+    projectId: 'realestate-d9b12',
+    storageBucket: 'realestate-d9b12.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyD8TrLOC9Zr1meWQa8fjfjLgJ1LyVxrJQk',
-    appId: '1:714414033482:ios:bc250e71327397d099b4b3',
-    messagingSenderId: '714414033482',
-    projectId: 'realestate-14af5',
-    storageBucket: 'realestate-14af5.appspot.com',
+    apiKey: 'AIzaSyBrQRIdqFjFgUtcJJYQILmUMtR7y4J4uJo',
+    appId: '1:194326811955:ios:ad09d18b14ff0b949f1a46',
+    messagingSenderId: '194326811955',
+    projectId: 'realestate-d9b12',
+    storageBucket: 'realestate-d9b12.appspot.com',
+    androidClientId: '194326811955-caks2beij0egr2mj1gfqj46bv3l8pu46.apps.googleusercontent.com',
+    iosClientId: '194326811955-a2istl019eupsdqiond2lb0e6u8aq5jj.apps.googleusercontent.com',
     iosBundleId: 'com.example.realestate',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyD8TrLOC9Zr1meWQa8fjfjLgJ1LyVxrJQk',
-    appId: '1:714414033482:ios:3370e5963912b4a099b4b3',
-    messagingSenderId: '714414033482',
-    projectId: 'realestate-14af5',
-    storageBucket: 'realestate-14af5.appspot.com',
+    apiKey: 'AIzaSyBrQRIdqFjFgUtcJJYQILmUMtR7y4J4uJo',
+    appId: '1:194326811955:ios:d3ba7862d148a62b9f1a46',
+    messagingSenderId: '194326811955',
+    projectId: 'realestate-d9b12',
+    storageBucket: 'realestate-d9b12.appspot.com',
+    androidClientId: '194326811955-caks2beij0egr2mj1gfqj46bv3l8pu46.apps.googleusercontent.com',
+    iosClientId: '194326811955-ebg1mti82t6sf4pv6up9mqa2fumkrtm2.apps.googleusercontent.com',
     iosBundleId: 'com.example.realestate.RunnerTests',
   );
 }

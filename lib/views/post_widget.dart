@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:realestate/models/core/country.dart';
@@ -5,12 +7,20 @@ import 'package:svg_flutter/svg.dart';
 import '../models/core/post/post.dart';
 import '../models/helpers/function_helpers.dart';
 
+enum UseType { home, liked, edit }
+
 class PostCard extends StatelessWidget {
   final Post post;
+  final UseType type;
   final Country? countryInfo;
   final Function() onClicked;
+  final Function()? onLongPress;
+  final Function(String)? onHeartClicked;
   const PostCard(
-      {this.countryInfo,
+      {this.onLongPress,
+      required this.type,
+      this.onHeartClicked,
+      this.countryInfo,
       required this.post,
       required this.onClicked,
       super.key});
@@ -22,6 +32,7 @@ class PostCard extends StatelessWidget {
       priceText += ' / ${post.period}';
     }
     return GestureDetector(
+      onLongPress: () => onLongPress?.call(),
       onTap: onClicked,
       child: Card(
         color: const Color(0xFF252525),
@@ -30,7 +41,7 @@ class PostCard extends StatelessWidget {
         ),
         elevation: 4.0,
         margin: const EdgeInsets.only(
-          top: 30,
+          top: 10,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -61,7 +72,13 @@ class PostCard extends StatelessWidget {
               child: Image.network(
                 // errorBuilder: (holyContext, error, stackTrace) =>
                 //     Center(child: Text('error')),
-                post.media?[0], // Replace with your image path
+                post.media?[0],
+                errorBuilder: (context, obj, trace) => Container(
+                  height: 200,
+                  child: const Icon(
+                    CupertinoIcons.eye_slash_fill,
+                  ),
+                ), // Replace with your image path
                 height: 200.0, // Adjust the height as needed
                 fit: BoxFit.fitWidth,
               ),
@@ -79,7 +96,17 @@ class PostCard extends StatelessWidget {
                     ),
                   ),
                   GestureDetector(
-                      onTap: () {}, child: const Icon(CupertinoIcons.heart))
+                      onTap: () {
+                        onHeartClicked?.call(post.id!);
+                      },
+                      child: type == UseType.liked
+                          ? const Icon(
+                              CupertinoIcons.heart_slash_fill,
+                              color: CupertinoColors.white,
+                            )
+                          : type == UseType.home
+                              ? Icon(CupertinoIcons.heart)
+                              : Container())
                 ],
               ),
             ),

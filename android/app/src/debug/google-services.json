@@ -1,20 +1,20 @@
 {
   "project_info": {
-    "project_number": "714414033482",
-    "project_id": "realestate-14af5",
-    "storage_bucket": "realestate-14af5.appspot.com"
+    "project_number": "194326811955",
+    "project_id": "realestate-d9b12",
+    "storage_bucket": "realestate-d9b12.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:714414033482:android:43b859932a45c07d99b4b3",
+        "mobilesdk_app_id": "1:194326811955:android:edadc285e2235d529f1a46",
         "android_client_info": {
           "package_name": "com.flutter.realestate"
         }
       },
       "oauth_client": [
         {
-          "client_id": "714414033482-o4hruu9fegr9972ml9fi3cfrnva66pl8.apps.googleusercontent.com",
+          "client_id": "194326811955-ute9hq17dprkaupa69v0gqlj7uib5403.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.flutter.realestate",
@@ -22,27 +22,27 @@
           }
         },
         {
-          "client_id": "714414033482-sd39ihttit3sii0604f5rq1h3akgbtsr.apps.googleusercontent.com",
+          "client_id": "194326811955-l8hfgikuslg3plm68t6efkctllj71em9.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDMz6ZUNhpinxe7LIDIeH8KwHPV5jmLuUY"
+          "current_key": "AIzaSyClA90xeElp5-gYxidlZ2oHYu90uGjwnxo"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "714414033482-sd39ihttit3sii0604f5rq1h3akgbtsr.apps.googleusercontent.com",
+              "client_id": "194326811955-l8hfgikuslg3plm68t6efkctllj71em9.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "714414033482-hhvjupsr1qfg9m0jibbt94g77le34s7m.apps.googleusercontent.com",
+              "client_id": "194326811955-a2istl019eupsdqiond2lb0e6u8aq5jj.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.realestate.RunnerTests"
+                "bundle_id": "com.example.realestate"
               }
             }
           ]

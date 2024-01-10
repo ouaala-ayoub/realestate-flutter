@@ -8,14 +8,18 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:realestate/models/core/post/post.dart';
 import 'package:realestate/providers/auth_provider.dart';
+import 'package:realestate/providers/post_edit_provider.dart';
 import 'package:realestate/providers/post_page_provider.dart';
+import 'package:realestate/providers/posts_list_provider.dart';
 import 'package:realestate/providers/report_provider.dart';
 import 'package:realestate/providers/search_provider.dart';
+import 'package:realestate/views/post_advert.dart';
+import 'package:realestate/views/post_edit.dart';
 import 'package:realestate/views/post_page.dart';
+import 'package:realestate/views/profile_page.dart';
 import 'package:realestate/views/report_page.dart';
 import 'package:realestate/views/settings_page.dart';
 import 'firebase_options.dart';
-import 'providers/firebase_constants.dart';
 import 'views/main_page.dart';
 import 'views/filter_page.dart';
 
@@ -29,9 +33,10 @@ Future<void> main() async {
     //todo change
     GoogleProvider(
       clientId:
-          '714414033482-sd39ihttit3sii0604f5rq1h3akgbtsr.apps.googleusercontent.com',
+          '194326811955-l8hfgikuslg3plm68t6efkctllj71em9.apps.googleusercontent.com',
     ),
   ]);
+
   runApp(MyApp());
 }
 
@@ -62,7 +67,30 @@ class MyApp extends StatelessWidget {
         pageBuilder: (context, state) => CustomTransitionPage(
             child: SettingsPage(),
             transitionsBuilder: (context, an1, an2, child) =>
-                FadeTransition(opacity: an1, child: child)))
+                FadeTransition(opacity: an1, child: child))),
+    GoRoute(
+        path: '/profile/:id',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return ChangeNotifierProvider(
+            create: (context) => PostsListProvider(),
+            child: ProfilePage(
+              userId: id,
+            ),
+          );
+        }),
+    GoRoute(
+        path: '/post_edit/:id',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return ChangeNotifierProvider(
+            create: (context) => PostEditProvider(),
+            child: PostEditPage(
+              postId: id,
+            ),
+          );
+        }),
+    GoRoute(path: '/post_advert', builder: (context, state) => PostAdvert()),
   ]);
 //  builder: (context, state) => SettingsPage()
   // This widget is the root of your application.

@@ -18,15 +18,22 @@ class LoginPage extends StatelessWidget {
         actions: [
           AuthStateChangeAction((context, state) async {
             if (state is SignedIn) {
-              logger.i('logged in');
+              logger.i('logged in using firebase');
               final token = await state.user?.getIdToken();
               logger.i('logged token $token');
               //! test is login is successfull with our backend if i change id
               provider.login(token,
-                  onSuccess: (user) => context.go(sourceRoute),
+                  onSuccess: (user) {
+                    logger.i(user);
+                    provider.fetshAuth();
+                    context.pushReplacement(sourceRoute);
+                  },
                   onFail: (e) => logger.e(e));
               // context.go(sourceRoute);
-              FirebaseAuth.instance.signOut();
+              // FirebaseAuth.instance.signOut();
+            }
+            if (state is AuthFailed) {
+              logger.e(state.exception.toString());
             }
           })
         ],

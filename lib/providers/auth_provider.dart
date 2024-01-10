@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:realestate/models/core/post/owner.dart';
 import 'package:realestate/models/helpers/auth_helper.dart';
 
@@ -23,5 +24,9 @@ class RealestateAuthProvider extends ChangeNotifier {
       required Function(dynamic) onFail}) async {
     final res = await _helper.login(token);
     res.fold((l) => onFail(l), (r) => onSuccess(r));
+  }
+
+  logout() async {
+    await const FlutterSecureStorage().delete(key: 'session_cookie');
   }
 }

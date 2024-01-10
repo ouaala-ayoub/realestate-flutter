@@ -204,8 +204,10 @@ class _HomePageState extends State<HomePage> {
                                   }
                                 });
                                 return PostCard(
+                                  type: UseType.home,
                                   countryInfo: country,
                                   post: item,
+                                  onHeartClicked: (postId) {},
                                   onClicked: () {
                                     context.push('/postPage', extra: item);
                                   },
@@ -225,11 +227,5 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    context.read<HomePageProvider>().pagingController.dispose();
-    super.dispose();
   }
 }

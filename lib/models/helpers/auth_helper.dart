@@ -11,7 +11,7 @@ class AuthHelper {
 
   Future<Either<dynamic, RealestateUser>> fetshAuth() async {
     try {
-      return Right(RealestateUser(id: '121212'));
+      // return Right(RealestateUser(id: '121212'));
       final res = await _api.getAuth();
       return Right(RealestateUser.fromMap(res));
     } on DioException catch (e) {
@@ -26,6 +26,11 @@ class AuthHelper {
     try {
       final res = await _api.login(token);
       return Right(RealestateUser.fromMap(res));
+    } on DioException catch (e) {
+      if (e.response?.data['message'] != null) {
+        return Left(e.response?.data['message']);
+      }
+      return Left(e);
     } catch (e) {
       return Left(e);
     }

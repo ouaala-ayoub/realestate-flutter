@@ -72,6 +72,12 @@ class _PostPageState extends State<PostPage> {
                       widget.post.media?[0], // Replace with your image path
                       height: 300, // Adjust the height as needed
                       fit: BoxFit.fitWidth,
+                      errorBuilder: (context, obj, trace) => Container(
+                        height: 300,
+                        child: const Icon(
+                          CupertinoIcons.eye_slash_fill,
+                        ),
+                      ),
                     ),
                   ),
                 ),
