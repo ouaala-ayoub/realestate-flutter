@@ -7,33 +7,26 @@ import 'package:realestate/models/core/lates_news.dart';
 import 'package:realestate/models/core/post/post.dart';
 import 'package:realestate/models/helpers/posts_helper.dart';
 import 'package:realestate/models/helpers/static_data_helper.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../models/core/search_params.dart';
 
 class HomePageProvider extends ChangeNotifier {
-  final helper = StaticDataHelper();
-  final postsHelper = PostsHelper();
+  final _helper = StaticDataHelper();
+  final _postsHelper = PostsHelper();
 
-  final PagingController<int, Post> _pagingController =
+  final PagingController<int, PostAndLoading> _pagingController =
       PagingController(firstPageKey: 1);
-  PagingController<int, Post> get pagingController => _pagingController;
+  PagingController<int, PostAndLoading> get pagingController =>
+      _pagingController;
 
   bool newsLoading = false;
 
   Either<dynamic, LatesNews> news = Right(LatesNews());
   Either<dynamic, List<Post>> posts = const Right([]);
 
-  launchWebSite(String url) async {
-    final Uri uri = Uri.parse(url);
-    if (!await launchUrl(uri)) {
-      throw Exception('Could not launch $url');
-    }
-  }
-
   getPosts(SearchParams searchParams) async {
     try {
-      posts = await postsHelper.fetshPosts(
+      posts = await _postsHelper.fetshPosts(
           search: searchParams.search,
           category: searchParams.category,
           city: searchParams.city,
@@ -48,17 +41,16 @@ class HomePageProvider extends ChangeNotifier {
         throw Exception('Unxepected error');
       }, (items) {
         final isLastPage = items.isEmpty;
-        logger.d('isLastPage $isLastPage');
+        final itemsAndLoadings =
+            items.map((post) => PostAndLoading(post, false)).toList();
         if (isLastPage) {
           // todo fix broken logic
-          _pagingController.appendLastPage(items);
+          _pagingController.appendLastPage(itemsAndLoadings);
         } else {
           // searchParams!.page = (searchParams.page ?? 1) + 1;
           searchParams.page++;
           final nextPageKey = searchParams.page;
-          logger.d('nextPageKey $nextPageKey');
-          logger.d('appending $items');
-          _pagingController.appendPage(items, nextPageKey);
+          _pagingController.appendPage(itemsAndLoadings, nextPageKey);
         }
       });
     } catch (e) {
@@ -67,11 +59,22 @@ class HomePageProvider extends ChangeNotifier {
     }
   }
 
+  setLoading(loading, index) {
+    _pagingController.itemList?[index].loading = loading;
+    notifyListeners();
+  }
+
   getNews() async {
     newsLoading = true;
-    news = await helper.getNews();
+    news = await _helper.getNews();
     logger.d(news);
     newsLoading = false;
     notifyListeners();
   }
+}
+
+class PostAndLoading {
+  Post post;
+  bool loading;
+  PostAndLoading(this.post, this.loading);
 }

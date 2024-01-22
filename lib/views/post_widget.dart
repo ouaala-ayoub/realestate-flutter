@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:realestate/models/core/country.dart';
@@ -12,12 +10,16 @@ enum UseType { home, liked, edit }
 class PostCard extends StatelessWidget {
   final Post post;
   final UseType type;
+  final bool? loading;
+  final bool? isLiked;
   final Country? countryInfo;
   final Function() onClicked;
   final Function()? onLongPress;
   final Function(String)? onHeartClicked;
   const PostCard(
-      {this.onLongPress,
+      {this.loading,
+      this.isLiked,
+      this.onLongPress,
       required this.type,
       this.onHeartClicked,
       this.countryInfo,
@@ -73,9 +75,9 @@ class PostCard extends StatelessWidget {
                 // errorBuilder: (holyContext, error, stackTrace) =>
                 //     Center(child: Text('error')),
                 post.media?[0],
-                errorBuilder: (context, obj, trace) => Container(
+                errorBuilder: (context, obj, trace) => const SizedBox(
                   height: 200,
-                  child: const Icon(
+                  child: Icon(
                     CupertinoIcons.eye_slash_fill,
                   ),
                 ), // Replace with your image path
@@ -105,7 +107,19 @@ class PostCard extends StatelessWidget {
                               color: CupertinoColors.white,
                             )
                           : type == UseType.home
-                              ? Icon(CupertinoIcons.heart)
+                              ? loading == true
+                                  ? const Center(
+                                      child: CupertinoActivityIndicator(),
+                                    )
+                                  : isLiked == true
+                                      ? const Icon(
+                                          CupertinoIcons.heart_slash_fill,
+                                          color: CupertinoColors.white,
+                                        )
+                                      : const Icon(
+                                          CupertinoIcons.heart,
+                                          color: CupertinoColors.white,
+                                        )
                               : Container())
                 ],
               ),

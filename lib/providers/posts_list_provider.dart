@@ -7,11 +7,16 @@ import '../models/core/post/post.dart';
 class PostsListProvider extends ChangeNotifier {
   final _helper = PostsHelper();
   bool loading = false;
-  Either<dynamic, List<Post>> posts = const Right([Post(), Post()]);
+  late Either<dynamic, List<Post>> posts;
+  late Either<dynamic, List<Post>> _filtred;
+  Either<dynamic, List<Post>> get filtred => _filtred;
+
+  //todo add search
 
   fetshUserPosts(userId) async {
     loading = true;
     posts = await _helper.fetshUserPosts(userId);
+    _filtred = posts;
     loading = false;
     notifyListeners();
   }
@@ -25,5 +30,23 @@ class PostsListProvider extends ChangeNotifier {
         notifyListeners();
       });
     });
+  }
+
+  runFilter(String query) {
+    if (query.isEmpty) {
+      _filtred = posts;
+    } else {
+      _filtred = posts.fold((l) => Left(l), (r) {
+        return Right(r
+            .where((element) =>
+                element
+                    .toString()
+                    .toLowerCase()
+                    .contains(query.toLowerCase()) ==
+                true)
+            .toList());
+      });
+    }
+    notifyListeners();
   }
 }

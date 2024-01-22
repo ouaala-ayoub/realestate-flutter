@@ -18,14 +18,4 @@ class LikedPageProvider extends ChangeNotifier {
     loading = false;
     notifyListeners();
   }
-
-  unlike(postId) async {
-    final res = await _helper.unlike(postId);
-    res.fold((l) => null, (r) {
-      likedPosts.fold((l) => null, (list) {
-        list.removeWhere((element) => element.id == postId);
-        notifyListeners();
-      });
-    });
-  }
 }

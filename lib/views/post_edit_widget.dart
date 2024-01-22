@@ -34,7 +34,11 @@ class PostEditWidget extends StatelessWidget {
               style: TextStyle(
                   color: post.status == 'Rejected'
                       ? CupertinoColors.systemRed
-                      : CupertinoColors.white,
+                      : post.status == 'Pending'
+                          ? CupertinoColors.activeOrange
+                          : post.status == 'Approved'
+                              ? CupertinoColors.activeGreen
+                              : CupertinoColors.white,
                   fontSize: 20),
             ),
             PostCard(

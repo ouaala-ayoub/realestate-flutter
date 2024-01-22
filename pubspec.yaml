@@ -51,6 +51,11 @@ dependencies:
   firebase_ui_auth:
   google_sign_in: 
   firebase_ui_oauth_google: 
+  cupertino_stepper: 
+  image_picker :
+  firebase_storage :
+  firebase_app_check: 
+  share_plus: 
 
 dev_dependencies:
   flutter_test:

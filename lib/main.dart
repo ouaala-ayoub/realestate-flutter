@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:firebase_ui_oauth_google/firebase_ui_oauth_google.dart';
@@ -8,18 +8,21 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:realestate/models/core/post/post.dart';
 import 'package:realestate/providers/auth_provider.dart';
+import 'package:realestate/providers/liked_provider.dart';
 import 'package:realestate/providers/post_edit_provider.dart';
 import 'package:realestate/providers/post_page_provider.dart';
 import 'package:realestate/providers/posts_list_provider.dart';
 import 'package:realestate/providers/report_provider.dart';
 import 'package:realestate/providers/search_provider.dart';
 import 'package:realestate/views/post_advert.dart';
+import 'package:realestate/views/post_created.dart';
 import 'package:realestate/views/post_edit.dart';
 import 'package:realestate/views/post_page.dart';
 import 'package:realestate/views/profile_page.dart';
 import 'package:realestate/views/report_page.dart';
 import 'package:realestate/views/settings_page.dart';
 import 'firebase_options.dart';
+import 'providers/post_advert_provider.dart';
 import 'views/main_page.dart';
 import 'views/filter_page.dart';
 
@@ -36,7 +39,10 @@ Future<void> main() async {
           '194326811955-l8hfgikuslg3plm68t6efkctllj71em9.apps.googleusercontent.com',
     ),
   ]);
-
+  FirebaseAppCheck.instance.activate(
+    androidProvider: AndroidProvider.debug,
+    appleProvider: AppleProvider.debug,
+  );
   runApp(MyApp());
 }
 
@@ -51,9 +57,9 @@ class MyApp extends StatelessWidget {
     GoRoute(
         path: '/postPage',
         builder: (context, state) => ChangeNotifierProvider(
-              create: (context) => PostPageProvider(),
+              create: (context) => PostPageProvider(state.extra as Post),
               child: PostPage(
-                post: state.extra as Post,
+                postId: (state.extra as Post).id!,
               ),
             )),
     GoRoute(
@@ -90,7 +96,18 @@ class MyApp extends StatelessWidget {
             ),
           );
         }),
-    GoRoute(path: '/post_advert', builder: (context, state) => PostAdvert()),
+    GoRoute(
+        path: '/post_advert/:ownerId',
+        builder: (context, state) {
+          final userId = state.pathParameters['ownerId']!;
+          return ChangeNotifierProvider(
+            create: (context) => PostAdvertProvider(),
+            child: PostAdvert(
+              ownerId: userId,
+            ),
+          );
+        }),
+    GoRoute(path: '/post_created', builder: (context, state) => PostCreated())
   ]);
 //  builder: (context, state) => SettingsPage()
   // This widget is the root of your application.
@@ -99,7 +116,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => SearchProvider()),
-        ChangeNotifierProvider(create: (context) => RealestateAuthProvider())
+        ChangeNotifierProvider(create: (context) => RealestateAuthProvider()),
+        ChangeNotifierProvider(create: (context) => LikedPageProvider()),
       ],
       child: CupertinoApp.router(
         debugShowCheckedModeBanner: false,

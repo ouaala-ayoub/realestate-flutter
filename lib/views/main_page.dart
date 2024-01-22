@@ -1,12 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:realestate/providers/home_page_provider.dart';
-import 'package:realestate/providers/liked_provider.dart';
-import 'package:realestate/views/add_post_page.dart';
 import 'package:realestate/views/home_page.dart';
 import 'package:realestate/views/liked_page.dart';
 
 import '../providers/auth_provider.dart';
+import 'post_advert_preview.dart';
 
 // todo search provider with search widget test
 
@@ -33,11 +32,8 @@ class _MainPageState extends State<MainPage> {
       ],
       child: const HomePage(),
     ),
-    ChangeNotifierProvider(
-      create: (context) => LikedPageProvider(),
-      child: LikedPage(),
-    ),
-    AddPostPage()
+    LikedPage(),
+    PostAdvertButtonPage()
   ];
 
   @override

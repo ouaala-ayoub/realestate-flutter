@@ -2,9 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:realestate/models/helpers/function_helpers.dart';
 import 'package:realestate/providers/auth_provider.dart';
 import 'package:realestate/views/login_page.dart';
-
+import 'package:svg_flutter/svg.dart';
 import '../main.dart';
 import '../models/core/post/owner.dart';
 import 'error_widget.dart';
@@ -28,11 +29,12 @@ class SettingsPage extends StatelessWidget {
                       if (error == 'Unauthorized') {
                         logger.e('Unauthorized');
                         return const LoginPage(
+                          goType: GoType.pushReplaced,
                           sourceRoute: '/settings',
                         );
                       } else {
                         return ErrorScreen(
-                          message: error.toString(),
+                          message: 'Unexpected error',
                           refreshFunction: () => authProvider.fetshAuth(),
                         );
                       }
@@ -73,22 +75,10 @@ class SettingsBody extends StatelessWidget {
                 child: const Icon(
                   CupertinoIcons.eye_slash_fill,
                 ),
-              ), // Replace with your image path
-              height: 120.0, // Adjust the height as needed
+              ),
+              height: 120.0,
               fit: BoxFit.fitWidth,
             ),
-            // CupertinoUserInterfaceLevel(
-            //   data: CupertinoUserInterfaceLevelData.elevated,
-            //   child: Container(
-            //     width: 100,
-            //     height: 100,
-            //     decoration: BoxDecoration(
-            //       shape: BoxShape.rectangle,
-            //       image: DecorationImage(
-            //           fit: BoxFit.cover, image: NetworkImage(profile!)),
-            //     ),
-            //   ),
-            // ),
             const SizedBox(height: 16),
             Text(
               user.name != null ? user.name! : 'unavailable',
@@ -105,42 +95,67 @@ class SettingsBody extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            CupertinoButton(
-              onPressed: () {
-                context.push('/profile/${user.id}');
-              },
-              child: const Row(mainAxisSize: MainAxisSize.min, children: [
-                Icon(CupertinoIcons.person_crop_circle_fill_badge_exclam),
-                SizedBox(
-                  width: 10,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CupertinoButton(
+                  onPressed: () {
+                    context.push('/profile/${user.id}');
+                  },
+                  child: const Row(mainAxisSize: MainAxisSize.min, children: [
+                    Icon(CupertinoIcons.person_crop_circle_fill_badge_exclam),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text('My posts')
+                  ]),
                 ),
-                Text('Edit Profile')
-              ]),
-            ),
-            CupertinoButton(
-              onPressed: () => context.push('/post_advert'),
-              child: const Row(mainAxisSize: MainAxisSize.min, children: [
-                Icon(CupertinoIcons.add_circled),
-                SizedBox(
-                  width: 10,
+                CupertinoButton(
+                  onPressed: () => context.push('/post_advert/${user.id}'),
+                  child: const Row(mainAxisSize: MainAxisSize.min, children: [
+                    Icon(CupertinoIcons.add_circled),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text('Post Advert')
+                  ]),
                 ),
-                Text('Post Advert')
-              ]),
-            ),
-            CupertinoButton(
-              onPressed: () {
-                final provider = context.read<RealestateAuthProvider>();
-                FirebaseAuth.instance.signOut();
-                provider.logout();
-                provider.fetshAuth();
-              },
-              child: const Row(mainAxisSize: MainAxisSize.min, children: [
-                Icon(CupertinoIcons.arrow_left_circle),
-                SizedBox(
-                  width: 10,
+                CupertinoButton(
+                  onPressed: () {
+                    const instagramUrl =
+                        'https://www.instagram.com/properties.realestate_/';
+
+                    launchWebSite(instagramUrl);
+                  },
+                  child: Row(mainAxisSize: MainAxisSize.min, children: [
+                    SvgPicture.asset('assets/icons/instagram.svg',
+                        height: 28,
+                        width: 28,
+                        colorFilter: const ColorFilter.mode(
+                            CupertinoColors.systemYellow, BlendMode.srcIn)),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    const Text('Instagram')
+                  ]),
                 ),
-                Text('Logout')
-              ]),
+                CupertinoButton(
+                  onPressed: () {
+                    final provider = context.read<RealestateAuthProvider>();
+                    FirebaseAuth.instance.signOut();
+                    provider.logout();
+                    provider.fetshAuth();
+                  },
+                  child: const Row(mainAxisSize: MainAxisSize.min, children: [
+                    Icon(CupertinoIcons.arrow_left_circle),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text('Logout')
+                  ]),
+                )
+              ],
             ),
           ],
         )

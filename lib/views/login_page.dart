@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
@@ -6,9 +5,12 @@ import 'package:provider/provider.dart';
 import 'package:realestate/main.dart';
 import 'package:realestate/providers/auth_provider.dart';
 
+enum GoType { pushReplaced, push, go, doNothing }
+
 class LoginPage extends StatelessWidget {
+  final GoType goType;
   final String sourceRoute;
-  const LoginPage({required this.sourceRoute, super.key});
+  const LoginPage({required this.goType, required this.sourceRoute, super.key});
 
   //! context.go maybe after success google login
   @override
@@ -26,7 +28,14 @@ class LoginPage extends StatelessWidget {
                   onSuccess: (user) {
                     logger.i(user);
                     provider.fetshAuth();
-                    context.pushReplacement(sourceRoute);
+                    goType == GoType.pushReplaced
+                        ? context.pushReplacement(sourceRoute)
+                        : goType == GoType.push
+                            ? context.push(sourceRoute)
+                            : goType == GoType.go
+                                ? context.go(sourceRoute)
+                                : () {};
+                    ;
                   },
                   onFail: (e) => logger.e(e));
               // context.go(sourceRoute);

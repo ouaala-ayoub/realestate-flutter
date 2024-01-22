@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
-import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:realestate/main.dart';
 import 'package:realestate/providers/posts_list_provider.dart';
@@ -36,7 +35,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ? const Center(
                         child: CupertinoActivityIndicator(),
                       )
-                    : provider.posts.fold(
+                    : provider.filtred.fold(
                         (e) => ErrorScreen(
                             refreshFunction: () =>
                                 provider.fetshUserPosts(widget.userId),
@@ -46,7 +45,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                   const EdgeInsets.only(left: 10, right: 10),
                               child: Column(children: [
                                 const SizedBox(height: 12),
-                                const CupertinoSearchTextField(),
+                                CupertinoSearchTextField(
+                                  onChanged: (query) =>
+                                      provider.runFilter(query),
+                                  onSubmitted: (query) =>
+                                      provider.runFilter(query),
+                                ),
                                 const SizedBox(height: 12),
                                 posts.isEmpty
                                     ? const Expanded(

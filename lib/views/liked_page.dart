@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:realestate/providers/liked_provider.dart';
 import 'package:realestate/providers/search_provider.dart';
@@ -16,17 +16,17 @@ class LikedPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(middle: Text('Liked')),
+      navigationBar: const CupertinoNavigationBar(middle: Text('Liked Posts')),
       child: Consumer<RealestateAuthProvider>(
-          builder: (context, provider, widget) => provider.loading ||
-                  provider.auth == null
+          builder: (context, provider, widget) => provider.auth == null
               ? const Center(
                   child: CupertinoActivityIndicator(),
                 )
               : provider.auth!.fold((error) {
                   if (error == 'Unauthorized') {
                     return const LoginPage(
-                      sourceRoute: '/settings',
+                      goType: GoType.doNothing,
+                      sourceRoute: '/',
                     );
                   } else {
                     return ErrorScreen(
@@ -49,11 +49,11 @@ class LikedPage extends StatelessWidget {
                                 (e) => ErrorScreen(
                                     refreshFunction: () =>
                                         likedProvider.fetshLikedPosts(user.id),
-                                    message: e.toString()),
-                                (liked) => liked.isEmpty
+                                    message: e.toString()), (liked) {
+                                return liked.isEmpty
                                     ? const Center(
                                         child: Text(
-                                          'No liked posts yet',
+                                          'No liked posts',
                                           style: TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold),
@@ -78,14 +78,24 @@ class LikedPage extends StatelessWidget {
                                             }
                                           });
                                           return PostCard(
-                                              onHeartClicked: (postId) =>
-                                                  likedProvider.unlike(postId),
+                                              onHeartClicked: (postId) {
+                                                provider.unlike(postId,
+                                                    onSuccess: () {
+                                                  provider.notify();
+                                                  provider.fetshAuth();
+                                                  likedProvider
+                                                      .fetshLikedPosts(user.id);
+                                                });
+                                              },
                                               countryInfo: country,
                                               type: UseType.liked,
                                               post: item,
-                                              onClicked: () {});
+                                              onClicked: () => context.push(
+                                                  '/postPage',
+                                                  extra: item));
                                         },
-                                      ));
+                                      );
+                              });
                       }))),
     );
   }

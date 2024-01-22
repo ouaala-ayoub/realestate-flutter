@@ -4,10 +4,11 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:provider/provider.dart';
 import 'package:realestate/main.dart';
 import 'package:realestate/models/core/types.dart';
+import 'package:realestate/providers/auth_provider.dart';
 import 'package:realestate/providers/home_page_provider.dart';
+import 'package:realestate/providers/liked_provider.dart';
 import 'package:realestate/providers/search_provider.dart';
 import 'package:realestate/views/post_widget.dart';
-import '../models/core/post/post.dart';
 import '../models/helpers/function_helpers.dart';
 
 class HomePage extends StatefulWidget {
@@ -18,6 +19,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<bool> loadings = [];
   @override
   void initState() {
     final homeProvider = context.read<HomePageProvider>();
@@ -63,167 +65,291 @@ class _HomePageState extends State<HomePage> {
               ),
               middle: GestureDetector(
                   onTap: () async {
-                    homeProvider.launchWebSite(url);
+                    try {
+                      launchWebSite(url);
+                    } catch (e) {
+                      logger.e('message');
+                    }
                   },
                   child: const Text(url))),
           child: SafeArea(
-              child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              const SizedBox(
-                height: 20,
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: CupertinoSegmentedControl<String>(
-                  //todo the selected value should get set in the group
-                  groupValue: searchProvider.searchParams.type ?? 'All',
-
-                  children: {
-                    for (var element in types)
-                      element: Padding(
-                        padding: const EdgeInsets.only(top: 5, bottom: 5),
-                        child: Text(
-                          element,
-                          style: const TextStyle(color: CupertinoColors.white),
-                        ),
-                      )
-                  },
-                  onValueChanged: (String? value) {
-                    logger.i(value);
-                    searchProvider.setSelectedType(value);
-                    searchProvider.searchParams.page = 1;
-                    homeProvider.pagingController.refresh();
-                  },
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: 20,
                 ),
-              ),
-              chooseButton(
-                  'country',
-                  () => showActionSheet(context, searchProvider, (country) {
-                        searchProvider.searchParams.page = 1;
-                        homeProvider.pagingController.refresh();
-                      }),
-                  context,
-                  searchProvider),
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.only(left: 15, right: 15),
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              'Latest News',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: CupertinoTheme.of(buildContext)
-                                      .primaryColor),
-                            )),
-                        const SizedBox(
-                          height: 10,
+                SizedBox(
+                  width: double.infinity,
+                  child: CupertinoSegmentedControl<String>(
+                    //todo the selected value should get set in the group
+                    groupValue: searchProvider.searchParams.type ?? 'All',
+
+                    children: {
+                      for (var element in types)
+                        element: Padding(
+                          padding: const EdgeInsets.only(top: 5, bottom: 5),
+                          child: Text(
+                            element,
+                            style: TextStyle(
+                                color:
+                                    searchProvider.searchParams.type == element
+                                        ? CupertinoColors.black
+                                        : CupertinoColors.white),
+                          ),
+                        )
+                    },
+                    onValueChanged: (String? value) {
+                      logger.i(value);
+                      searchProvider.setSelectedType(value);
+                      searchProvider.searchParams.page = 1;
+                      homeProvider.pagingController.refresh();
+                    },
+                  ),
+                ),
+                chooseButton(
+                    'country',
+                    () => showActionSheet(context, searchProvider, (country) {
+                          searchProvider.setSelectedCountry(country);
+                          searchProvider.searchParams.page = 1;
+                          homeProvider.pagingController.refresh();
+                        }),
+                    context,
+                    searchProvider.searchParams.country),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: CustomScrollView(
+                      shrinkWrap: true,
+                      slivers: [
+                        CupertinoSliverRefreshControl(
+                          onRefresh: () async {
+                            searchProvider.refreshParams();
+                            homeProvider.pagingController.refresh();
+                          },
                         ),
-                        homeProvider.newsLoading
-                            ? const Center(
-                                child: CupertinoActivityIndicator(),
-                              )
-                            : homeProvider.news.fold(
-                                (e) => const Center(
-                                      child: Text('Unexpected error'),
+                        SliverToBoxAdapter(
+                          child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Latest News',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: CupertinoTheme.of(buildContext)
+                                        .primaryColor),
+                              )),
+                        ),
+                        const SliverToBoxAdapter(
+                          child: SizedBox(
+                            height: 10,
+                          ),
+                        ),
+                        SliverList.list(children: [
+                          homeProvider.newsLoading
+                              ? const Center(
+                                  child: CupertinoActivityIndicator(),
+                                )
+                              : homeProvider.news.fold(
+                                  (e) => const Center(
+                                        child: Text('Unexpected error'),
+                                      ),
+                                  (news) => ListView.builder(
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount: 1,
+                                      // itemCount: news.length,
+                                      itemBuilder: (context, index) {
+                                        return Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Image.network(
+                                              'https://realestatefy.vercel.app/${news.image}',
+                                              // loadingBuilder: (context, child,
+                                              //         loadingProgress) =>
+                                              //     CupertinoActivityIndicator(),
+                                            ),
+                                            const SizedBox(
+                                              height: 5,
+                                            ),
+                                            Text('${news.title}',
+                                                style: const TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                            const SizedBox(
+                                              height: 5,
+                                            ),
+                                            Text(
+                                              news.contents!.join('\n'),
+                                              style:
+                                                  const TextStyle(fontSize: 14),
+                                            )
+                                          ],
+                                        );
+                                      })),
+                        ]),
+                        SliverToBoxAdapter(
+                          child: chooseButton(
+                              'category',
+                              () => showCategoryActionSheet(
+                                      context, searchProvider, (category) {
+                                    searchProvider
+                                        .setSelectedCategory(category);
+                                    searchProvider.searchParams.page = 1;
+                                    homeProvider.pagingController.refresh();
+                                  }),
+                              context,
+                              searchProvider.searchParams.category),
+                        ),
+                        SliverToBoxAdapter(
+                          child: CupertinoSearchTextField(
+                            onChanged: (query) {
+                              if (query.isEmpty) {
+                                searchProvider.setSearchQuery(null);
+                                searchProvider.searchParams.page = 1;
+                                homeProvider.pagingController.refresh();
+                              }
+                            },
+                            onSubmitted: (query) {
+                              searchProvider.setSearchQuery(query);
+                              searchProvider.searchParams.page = 1;
+                              homeProvider.pagingController.refresh();
+                            },
+                          ),
+                        ),
+                        SliverToBoxAdapter(
+                          child: PagedListView(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            pagingController: homeProvider.pagingController,
+                            builderDelegate: PagedChildBuilderDelegate<
+                                    PostAndLoading>(
+                                noItemsFoundIndicatorBuilder: (context) =>
+                                    Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        const Text('No posts found'),
+                                        CupertinoButton(
+                                            child: const Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(CupertinoIcons.refresh),
+                                                SizedBox(
+                                                  width: 5,
+                                                ),
+                                                Text('Refresh'),
+                                              ],
+                                            ),
+                                            onPressed: () {
+                                              searchProvider.refreshParams();
+                                              homeProvider.pagingController
+                                                  .refresh();
+                                            })
+                                      ],
                                     ),
-                                (news) => ListView.builder(
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemCount: 1,
-                                    // itemCount: news.length,
-                                    itemBuilder: (context, index) {
-                                      logger.i('building $news');
-                                      return Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Image.network(
-                                            'https://realestatefy.vercel.app/${news.image}',
-                                            // loadingBuilder: (context, child,
-                                            //         loadingProgress) =>
-                                            //     CupertinoActivityIndicator(),
-                                          ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                          Text('${news.title}',
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold)),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                          Text(
-                                            news.contents!.join('\n'),
-                                            style:
-                                                const TextStyle(fontSize: 14),
-                                          )
-                                        ],
+                                firstPageProgressIndicatorBuilder: (context) {
+                                  loadings = [];
+                                  return const CupertinoActivityIndicator();
+                                },
+                                newPageProgressIndicatorBuilder: (context) =>
+                                    const CupertinoActivityIndicator(),
+                                itemBuilder: (context, item, index) {
+                                  final country = searchProvider.countries
+                                      .fold((l) => null, (r) {
+                                    try {
+                                      return r.firstWhere((element) =>
+                                          element.name ==
+                                          item.post.location?.country);
+                                    } catch (e) {
+                                      logger.e('element not found');
+                                      return null;
+                                    }
+                                  });
+                                  return Consumer<RealestateAuthProvider>(
+                                    builder: (context, authProvider, _) {
+                                      final liked = authProvider.auth?.fold(
+                                          (l) => null,
+                                          (user) => user.likes
+                                              ?.contains(item.post.id));
+
+                                      return PostCard(
+                                        type: UseType.home,
+                                        loading: item.loading,
+                                        isLiked: liked == true,
+                                        countryInfo: country,
+                                        post: item.post,
+                                        onHeartClicked: (postId) {
+                                          if (item.loading) {
+                                            return;
+                                          }
+                                          if (liked == null) {
+                                            //show a dialog
+                                            logger.i('not logged in');
+                                          } else if (liked == false) {
+                                            homeProvider.setLoading(
+                                                true, index);
+                                            authProvider.like(postId,
+                                                onSuccess: () {
+                                              homeProvider.setLoading(
+                                                  false, index);
+                                              authProvider.fetshAuth();
+                                              authProvider.auth?.fold(
+                                                  (l) => null,
+                                                  (user) => context
+                                                      .read<LikedPageProvider>()
+                                                      .fetshLikedPosts(
+                                                          user.id));
+                                            });
+                                          } else if (liked == true) {
+                                            //!fix that shit loadings
+                                            // setState(() {
+                                            //   loadings[index] = true;
+                                            // });
+                                            homeProvider.setLoading(
+                                                true, index);
+                                            authProvider.unlike(postId,
+                                                onSuccess: () {
+                                              // setState(() {
+                                              //   loadings[index] = false;
+                                              // });
+                                              homeProvider.setLoading(
+                                                  false, index);
+                                              authProvider.fetshAuth();
+                                              authProvider.auth?.fold(
+                                                  (l) => null,
+                                                  (user) => context
+                                                      .read<LikedPageProvider>()
+                                                      .fetshLikedPosts(
+                                                          user.id));
+                                            });
+                                          }
+                                        },
+                                        onClicked: () {
+                                          context.push('/postPage',
+                                              extra: item.post);
+                                        },
                                       );
-                                    })),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        chooseButton(
-                            'category',
-                            () => showCategoryActionSheet(
-                                    context, searchProvider, (category) {
-                                  searchProvider.searchParams.page = 1;
-                                  homeProvider.pagingController.refresh();
+                                    },
+                                  );
                                 }),
-                            context,
-                            searchProvider),
-                        const CupertinoSearchTextField(),
-                        PagedListView(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          pagingController: homeProvider.pagingController,
-                          builderDelegate: PagedChildBuilderDelegate<Post>(
-                              firstPageProgressIndicatorBuilder: (context) =>
-                                  const CupertinoActivityIndicator(),
-                              newPageProgressIndicatorBuilder: (context) =>
-                                  const CupertinoActivityIndicator(),
-                              itemBuilder: (context, item, index) {
-                                final country = searchProvider.countries
-                                    .fold((l) => null, (r) {
-                                  try {
-                                    return r.firstWhere((element) =>
-                                        element.name == item.location?.country);
-                                  } catch (e) {
-                                    logger.e('element not found');
-                                    return null;
-                                  }
-                                });
-                                return PostCard(
-                                  type: UseType.home,
-                                  countryInfo: country,
-                                  post: item,
-                                  onHeartClicked: (postId) {},
-                                  onClicked: () {
-                                    context.push('/postPage', extra: item);
-                                  },
-                                );
-                              }),
+                          ),
                         ),
-                        const SizedBox(
-                          height: 20,
+                        const SliverToBoxAdapter(
+                          child: SizedBox(
+                            height: 20,
+                          ),
                         )
                       ],
-                    )
-                  ],
+                    ),
+                  ),
                 ),
-              )
-            ],
-          )),
+              ],
+            ),
+          ),
         ),
       ),
     );
