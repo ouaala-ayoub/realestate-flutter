@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -9,7 +8,6 @@ import 'package:realestate/models/core/types.dart';
 import 'package:realestate/models/helpers/function_helpers.dart';
 import 'package:realestate/providers/post_edit_provider.dart';
 import 'package:realestate/providers/search_provider.dart';
-import 'package:realestate/views/country_info.dart';
 import 'package:realestate/views/double_text_field.dart';
 import 'package:realestate/views/error_widget.dart';
 import 'package:realestate/views/feature_widget.dart';
@@ -138,8 +136,18 @@ class _PostEditPageState extends State<PostEditPage> {
                                       onPressed: () {
                                         final searchProvider =
                                             context.read<SearchProvider>();
-                                        handleCountryCodeDialog(
-                                            context, searchProvider, provider);
+
+                                        showActionSheet(context, searchProvider,
+                                            (country) {
+                                          provider.postBuilder['phoneFlag'] =
+                                              country.image;
+
+                                          provider.postBuilder['contact']
+                                              ['code'] = country.dialCode;
+                                          provider.notifty();
+
+                                          // context.pop();
+                                        }, showCode: true);
                                       },
                                     ),
                                     Flexible(
@@ -524,48 +532,6 @@ class _PostEditPageState extends State<PostEditPage> {
         Text(provider.postBuilder['contact']['code'] ?? 'phone code'),
       ],
     );
-  }
-
-  Future<dynamic> handleCountryCodeDialog(BuildContext context,
-      SearchProvider searchProvider, PostEditProvider provider) {
-    return showCupertinoModalPopup(
-        context: context,
-        builder: (context) => searchProvider.countriesLoading
-            ? const Center(
-                child: CupertinoActivityIndicator(),
-              )
-            : searchProvider.countries.fold(
-                (e) => CupertinoButton(
-                    child: const Text('refresh'),
-                    onPressed: () {
-                      searchProvider.getCountries();
-                    }),
-                (countries) => CupertinoActionSheet(
-                      //todo add search
-                      title: const CupertinoSearchTextField(),
-                      cancelButton: CupertinoButton(
-                        child: const Text(
-                          'cancel',
-                          style: TextStyle(color: CupertinoColors.systemRed),
-                        ),
-                        onPressed: () => context.pop(),
-                      ),
-                      actions: countries
-                          .map((country) => GestureDetector(
-                                onTap: () {
-                                  provider.postBuilder['phoneFlag'] =
-                                      country.image;
-
-                                  provider.postBuilder['contact']['code'] =
-                                      country.dialCode;
-                                  provider.notifty();
-                                  context.pop();
-                                },
-                                child: CountryInfo(
-                                    country: country, showCode: true),
-                              ))
-                          .toList(),
-                    )));
   }
 
   showTypePicker(PostEditProvider provider) {

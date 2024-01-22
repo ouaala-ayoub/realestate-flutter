@@ -103,7 +103,8 @@ CupertinoButton cancelButton(BuildContext context) {
 }
 
 void showActionSheet(BuildContext context, SearchProvider searchProvider,
-    Function(Country country) onSelected) {
+    Function(Country country) onSelected,
+    {showCode = false}) {
   showCupertinoModalPopup(
     context: context,
     builder: (context) => searchProvider.countriesLoading
@@ -132,7 +133,7 @@ void showActionSheet(BuildContext context, SearchProvider searchProvider,
                                 },
                                 child: CountryInfo(
                                   country: country,
-                                  showCode: false,
+                                  showCode: showCode,
                                 ),
                               ))
                           .toList(),

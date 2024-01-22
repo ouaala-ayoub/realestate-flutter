@@ -8,7 +8,6 @@ import 'package:realestate/providers/post_advert_provider.dart';
 import 'package:realestate/providers/search_provider.dart';
 import 'package:svg_flutter/svg.dart';
 import '../../models/core/types.dart';
-import '../country_info.dart';
 
 class PropretyInfoStep extends StatelessWidget {
   const PropretyInfoStep({super.key});
@@ -116,51 +115,12 @@ class PropretyInfoStep extends StatelessWidget {
                       ),
                       onPressed: () {
                         final searchProvider = context.read<SearchProvider>();
-                        showCupertinoModalPopup(
-                            context: context,
-                            builder: (context) => searchProvider
-                                    .countriesLoading
-                                ? const Center(
-                                    child: CupertinoActivityIndicator(),
-                                  )
-                                : searchProvider.countries.fold(
-                                    (e) => CupertinoButton(
-                                        child: const Text('refresh'),
-                                        onPressed: () {
-                                          searchProvider.getCountries();
-                                        }),
-                                    (countries) => CupertinoActionSheet(
-                                          //todo add search
-                                          title:
-                                              const CupertinoSearchTextField(),
-                                          cancelButton: CupertinoButton(
-                                            child: const Text(
-                                              'cancel',
-                                              style: TextStyle(
-                                                  color: CupertinoColors
-                                                      .systemRed),
-                                            ),
-                                            onPressed: () => context.pop(),
-                                          ),
-                                          actions: countries
-                                              .map((country) => GestureDetector(
-                                                    onTap: () {
-                                                      provider.setFields([
-                                                        'phoneCode',
-                                                        'phoneFlag'
-                                                      ], [
-                                                        country.dialCode,
-                                                        country.image
-                                                      ]);
+                        showActionSheet(context, searchProvider, (country) {
+                          provider.setFields(['phoneCode', 'phoneFlag'],
+                              [country.dialCode, country.image]);
 
-                                                      context.pop();
-                                                    },
-                                                    child: CountryInfo(
-                                                        country: country,
-                                                        showCode: true),
-                                                  ))
-                                              .toList(),
-                                        )));
+                          // context.pop();
+                        }, showCode: true);
                       },
                     ),
                     child: CupertinoTextFormFieldRow(

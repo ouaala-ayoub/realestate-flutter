@@ -91,10 +91,13 @@ class _HomePageState extends State<HomePage> {
                           child: Text(
                             element,
                             style: TextStyle(
-                                color:
-                                    searchProvider.searchParams.type == element
-                                        ? CupertinoColors.black
-                                        : CupertinoColors.white),
+                                color: searchProvider.searchParams.type ==
+                                            element ||
+                                        (element == 'All' &&
+                                            searchProvider.searchParams.type ==
+                                                null)
+                                    ? CupertinoColors.black
+                                    : CupertinoColors.white),
                           ),
                         )
                     },
