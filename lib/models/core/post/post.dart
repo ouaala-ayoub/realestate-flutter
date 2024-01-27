@@ -15,7 +15,7 @@ class Post {
   final dynamic owner;
   final String? type;
   final String? period;
-  final int? likes;
+  int? likes;
   final List<dynamic>? features;
   final String? condition;
   final int? rooms;
@@ -28,7 +28,7 @@ class Post {
   final DateTime? updatedAt;
   final int? v;
 
-  const Post({
+  Post({
     this.id,
     this.description,
     this.media,
@@ -40,7 +40,7 @@ class Post {
     this.owner,
     this.type,
     this.period,
-    this.likes,
+    this.likes = 0,
     this.features,
     this.condition,
     this.rooms,

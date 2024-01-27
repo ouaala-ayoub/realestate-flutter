@@ -58,6 +58,7 @@ class _PostEditPageState extends State<PostEditPage> {
                           Expanded(
                             child: ListView(
                               children: [
+                                //todo add error texts
                                 CupertinoButton(
                                   onPressed: () =>
                                       showEditPicker(context, availableTypes,
@@ -116,95 +117,134 @@ class _PostEditPageState extends State<PostEditPage> {
                                 const SizedBox(
                                   height: 5,
                                 ),
-                                CupertinoTextField(
-                                  prefix: smallTitle('Price :'),
-                                  placeholder: 'Price',
-                                  controller: provider.postBuilder['price'],
-                                  inputFormatters: <TextInputFormatter>[
-                                    FilteringTextInputFormatter.digitsOnly
-                                  ],
-                                  keyboardType: TextInputType.number,
+                                CupertinoFormRow(
+                                  padding: const EdgeInsets.all(0),
+                                  error:
+                                      provider.postBuilder['price'].text.isEmpty
+                                          ? const Text('Please enter the price')
+                                          : null,
+                                  child: CupertinoTextField(
+                                    prefix: Padding(
+                                        padding: const EdgeInsets.only(left: 5),
+                                        child: smallTitle('Price :')),
+                                    placeholder: 'Price',
+                                    controller: provider.postBuilder['price'],
+                                    onChanged: (value) => provider.notifty(),
+                                    inputFormatters: <TextInputFormatter>[
+                                      FilteringTextInputFormatter.digitsOnly
+                                    ],
+                                    keyboardType: TextInputType.number,
+                                  ),
                                 ),
                                 const SizedBox(
                                   height: 10,
                                 ),
                                 smallTitle('Contact Informations :'),
-                                Row(
-                                  children: [
-                                    CupertinoButton(
-                                      child: flagAndCode(provider),
-                                      onPressed: () {
-                                        final searchProvider =
-                                            context.read<SearchProvider>();
+                                CupertinoFormRow(
+                                  padding: const EdgeInsets.all(0),
+                                  error: provider
+                                          .postBuilder['contact']['phone']
+                                          .text
+                                          .isEmpty
+                                      ? const Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 5, bottom: 5),
+                                          child: Text(
+                                              'Please enter your phone number'),
+                                        )
+                                      : null,
+                                  child: Row(
+                                    children: [
+                                      CupertinoButton(
+                                        child: flagAndCode(provider),
+                                        onPressed: () {
+                                          final searchProvider =
+                                              context.read<SearchProvider>();
 
-                                        showActionSheet(context, searchProvider,
-                                            (country) {
-                                          provider.postBuilder['phoneFlag'] =
-                                              country.image;
+                                          showActionSheet(
+                                              context, searchProvider,
+                                              (country) {
+                                            provider.postBuilder['phoneFlag'] =
+                                                country.image;
 
-                                          provider.postBuilder['contact']
-                                              ['code'] = country.dialCode;
-                                          provider.notifty();
+                                            provider.postBuilder['contact']
+                                                ['code'] = country.dialCode;
+                                            provider.notifty();
 
-                                          // context.pop();
-                                        }, showCode: true);
-                                      },
-                                    ),
-                                    Flexible(
-                                      child: CupertinoTextField(
-                                        maxLength: 15,
-                                        // onChanged: (value) =>
-                                        //     provider.updateNextStatus2(),
-                                        inputFormatters: [
-                                          FilteringTextInputFormatter.digitsOnly
-                                        ],
-                                        keyboardType: TextInputType.number,
-                                        placeholder: 'Phone Number',
-                                        controller: provider
-                                            .postBuilder['contact']['phone'],
+                                            // context.pop();
+                                          }, showCode: true);
+                                        },
                                       ),
-                                    )
-                                  ],
+                                      Flexible(
+                                        child: CupertinoTextField(
+                                          maxLength: 15,
+                                          onChanged: (value) =>
+                                              provider.notifty(),
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter
+                                                .digitsOnly
+                                          ],
+                                          keyboardType: TextInputType.number,
+                                          placeholder: 'Phone Number',
+                                          controller: provider
+                                              .postBuilder['contact']['phone'],
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        const Icon(
-                                          CupertinoIcons.phone,
-                                          size: 24,
+                                CupertinoFormRow(
+                                  padding: const EdgeInsets.all(0),
+                                  error: provider.postBuilder['contact']
+                                              ['type'] ==
+                                          null
+                                      ? const Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 5, bottom: 5),
+                                          child: Text(
+                                              'Choose atleast one communication method'),
+                                        )
+                                      : null,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            CupertinoIcons.phone,
+                                            size: 24,
+                                          ),
+                                          CupertinoSwitch(
+                                            value: provider.postBuilder['call'],
+                                            onChanged: (checked) =>
+                                                provider.handleContactType(
+                                                    'call', checked),
+                                          )
+                                        ],
+                                      ),
+                                      Row(children: [
+                                        SvgPicture.asset(
+                                          'assets/icons/whatsapp.svg',
+                                          height: 24,
+                                          width: 24,
+                                          colorFilter: const ColorFilter.mode(
+                                            CupertinoColors.activeGreen,
+                                            BlendMode.srcIn,
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 5,
                                         ),
                                         CupertinoSwitch(
-                                          value: provider.postBuilder['call'],
-                                          onChanged: (checked) =>
-                                              provider.handleContactType(
-                                                  'call', checked),
-                                        )
-                                      ],
-                                    ),
-                                    Row(children: [
-                                      SvgPicture.asset(
-                                        'assets/icons/whatsapp.svg',
-                                        height: 24,
-                                        width: 24,
-                                        colorFilter: const ColorFilter.mode(
-                                          CupertinoColors.activeGreen,
-                                          BlendMode.srcIn,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 5,
-                                      ),
-                                      CupertinoSwitch(
-                                          value:
-                                              provider.postBuilder['whatsapp'],
-                                          onChanged: (checked) =>
-                                              provider.handleContactType(
-                                                  'whatsapp', checked))
-                                    ]),
-                                  ],
+                                            value: provider
+                                                .postBuilder['whatsapp'],
+                                            onChanged: (checked) =>
+                                                provider.handleContactType(
+                                                    'whatsapp', checked))
+                                      ]),
+                                    ],
+                                  ),
                                 ),
                                 const SizedBox(
                                   height: 5,
@@ -222,14 +262,24 @@ class _PostEditPageState extends State<PostEditPage> {
                                     context,
                                     provider.postBuilder['location']
                                         ['country']),
-                                CupertinoTextField(
-                                  prefix: Padding(
-                                    padding: const EdgeInsets.only(left: 5),
-                                    child: smallTitle('City : '),
+                                CupertinoFormRow(
+                                  padding: const EdgeInsets.all(0),
+                                  error: provider
+                                          .postBuilder['location']['city']
+                                          .text
+                                          .isEmpty
+                                      ? const Text('Enter a city')
+                                      : null,
+                                  child: CupertinoTextField(
+                                    onChanged: (value) => provider.notifty(),
+                                    prefix: Padding(
+                                      padding: const EdgeInsets.only(left: 5),
+                                      child: smallTitle('City : '),
+                                    ),
+                                    placeholder: 'City',
+                                    controller: provider.postBuilder['location']
+                                        ['city'],
                                   ),
-                                  placeholder: 'City',
-                                  controller: provider.postBuilder['location']
-                                      ['city'],
                                 ),
                                 const SizedBox(
                                   height: 10,
@@ -246,16 +296,25 @@ class _PostEditPageState extends State<PostEditPage> {
                                 const SizedBox(
                                   height: 15,
                                 ),
-                                CupertinoTextField(
-                                  prefix: Padding(
-                                    padding: const EdgeInsets.only(left: 5),
-                                    child: smallTitle('Description :'),
+                                CupertinoFormRow(
+                                  padding: const EdgeInsets.all(0),
+                                  error: provider.postBuilder['description']
+                                          .text.isEmpty
+                                      ? const Text(
+                                          'Please provide a description')
+                                      : null,
+                                  child: CupertinoTextField(
+                                    prefix: Padding(
+                                      padding: const EdgeInsets.only(left: 5),
+                                      child: smallTitle('Description :'),
+                                    ),
+                                    placeholder: 'Description',
+                                    controller:
+                                        provider.postBuilder['description'],
+                                    onChanged: (value) => provider.notifty(),
+                                    minLines: 5,
+                                    maxLines: 5,
                                   ),
-                                  placeholder: 'Description',
-                                  controller:
-                                      provider.postBuilder['description'],
-                                  minLines: 5,
-                                  maxLines: 5,
                                 ),
                                 const SizedBox(
                                   height: 15,
@@ -293,47 +352,66 @@ class _PostEditPageState extends State<PostEditPage> {
                                             },
                                           ),
                                         ),
-                                        CupertinoTextField(
-                                          prefix: Row(
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 5),
-                                                child: smallTitle(
-                                                    'Number of Rooms : '),
-                                              ),
-                                              const SizedBox(
-                                                width: 20,
-                                              )
+                                        CupertinoFormRow(
+                                          padding: const EdgeInsets.all(0),
+                                          error: provider.postBuilder['rooms']
+                                                  .text.isEmpty
+                                              ? const Text('required *')
+                                              : null,
+                                          child: CupertinoTextField(
+                                            onChanged: (value) =>
+                                                provider.notifty(),
+                                            prefix: Row(
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 5),
+                                                  child: smallTitle(
+                                                      'Number of Rooms : '),
+                                                ),
+                                                const SizedBox(
+                                                  width: 20,
+                                                )
+                                              ],
+                                            ),
+                                            placeholder: 'Number of rooms',
+                                            controller:
+                                                provider.postBuilder['rooms'],
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly
                                             ],
+                                            keyboardType: TextInputType.number,
                                           ),
-                                          placeholder: 'Number of rooms',
-                                          controller:
-                                              provider.postBuilder['rooms'],
-                                          inputFormatters: [
-                                            FilteringTextInputFormatter
-                                                .digitsOnly
-                                          ],
-                                          keyboardType: TextInputType.number,
                                         ),
                                         const SizedBox(
                                           height: 15,
                                         ),
-                                        CupertinoTextField(
-                                          prefix: Padding(
-                                            padding:
-                                                const EdgeInsets.only(left: 5),
-                                            child: smallTitle(
-                                                'Number of Bathrooms :'),
+                                        CupertinoFormRow(
+                                          padding: const EdgeInsets.all(0),
+                                          error: provider
+                                                  .postBuilder['bathrooms']
+                                                  .text
+                                                  .isEmpty
+                                              ? const Text('required *')
+                                              : null,
+                                          child: CupertinoTextField(
+                                            prefix: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 5),
+                                              child: smallTitle(
+                                                  'Number of Bathrooms :'),
+                                            ),
+                                            placeholder: 'Number of Bathrooms',
+                                            controller: provider
+                                                .postBuilder['bathrooms'],
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly
+                                            ],
+                                            keyboardType: TextInputType.number,
                                           ),
-                                          placeholder: 'Number of Bathrooms',
-                                          controller:
-                                              provider.postBuilder['bathrooms'],
-                                          inputFormatters: [
-                                            FilteringTextInputFormatter
-                                                .digitsOnly
-                                          ],
-                                          keyboardType: TextInputType.number,
                                         ),
                                         const SizedBox(
                                           height: 15,
@@ -342,14 +420,33 @@ class _PostEditPageState extends State<PostEditPage> {
                                         const SizedBox(
                                           height: 10,
                                         ),
-                                        DoubleTextField(values: const [
-                                          'Floor Number',
-                                          'Out of',
-                                          'Floors in the building'
-                                        ], controllers: [
-                                          provider.postBuilder['floorNumber'],
-                                          provider.postBuilder['floors'],
-                                        ]),
+                                        CupertinoFormRow(
+                                          padding: const EdgeInsets.all(0),
+                                          error: provider
+                                                      .postBuilder[
+                                                          'floorNumber']
+                                                      .text
+                                                      .isEmpty ||
+                                                  provider.postBuilder['floors']
+                                                      .text.isEmpty
+                                              ? const Text('required *')
+                                              : null,
+                                          child: DoubleTextField(
+                                              onChanged1: (v) =>
+                                                  provider.notifty(),
+                                              onChanged2: (v) =>
+                                                  provider.notifty(),
+                                              values: const [
+                                                'Floor Number',
+                                                'Out of',
+                                                'Floors in the building'
+                                              ],
+                                              controllers: [
+                                                provider
+                                                    .postBuilder['floorNumber'],
+                                                provider.postBuilder['floors'],
+                                              ]),
+                                        ),
                                         const SizedBox(
                                           height: 10,
                                         ),
@@ -477,7 +574,10 @@ class _PostEditPageState extends State<PostEditPage> {
                                             ],
                                           ));
                                 }
-                              })
+                              }),
+                          const SizedBox(
+                            height: 10,
+                          )
                         ],
                       ),
                     ),

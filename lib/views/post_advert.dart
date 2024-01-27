@@ -79,7 +79,14 @@ class _PostAdvertState extends State<PostAdvert> {
                     ? showSubmitDialog(provider, context)
                     : ++currentStep;
               })
-          : null,
+          : currentStep == provider.steps.length - 1
+              ? () {
+                  setState(() {
+                    final firstErrorIndex = provider.canContinue.indexOf(false);
+                    currentStep = firstErrorIndex;
+                  });
+                }
+              : null,
       steps: provider.steps.map((element) {
         final i = provider.steps.indexOf(element);
         return _buildStep(

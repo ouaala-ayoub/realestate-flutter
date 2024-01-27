@@ -9,7 +9,7 @@ import '../models/core/post/post.dart';
 
 class PostEditProvider extends ChangeNotifier {
   final _helper = PostsHelper();
-  Either<dynamic, Post> post = const Right(Post());
+  Either<dynamic, Post> post = Right(Post());
   late Map<String, dynamic> postBuilder;
   late String type;
   bool loading = true;

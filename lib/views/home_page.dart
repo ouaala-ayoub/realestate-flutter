@@ -102,6 +102,8 @@ class _HomePageState extends State<HomePage> {
                         )
                     },
                     onValueChanged: (String? value) {
+                      //set postLoading
+                      //todo fix the fast click to another type problem
                       logger.i(value);
                       searchProvider.setSelectedType(value);
                       searchProvider.searchParams.page = 1;
@@ -308,17 +310,10 @@ class _HomePageState extends State<HomePage> {
                                                           user.id));
                                             });
                                           } else if (liked == true) {
-                                            //!fix that shit loadings
-                                            // setState(() {
-                                            //   loadings[index] = true;
-                                            // });
                                             homeProvider.setLoading(
                                                 true, index);
                                             authProvider.unlike(postId,
                                                 onSuccess: () {
-                                              // setState(() {
-                                              //   loadings[index] = false;
-                                              // });
                                               homeProvider.setLoading(
                                                   false, index);
                                               authProvider.fetshAuth();
@@ -331,9 +326,20 @@ class _HomePageState extends State<HomePage> {
                                             });
                                           }
                                         },
-                                        onClicked: () {
-                                          context.push('/postPage',
+                                        onClicked: () async {
+                                          final liked = await context.push(
+                                              '/postPage',
                                               extra: item.post);
+                                          logger.d(liked);
+                                          if (liked == 'liked') {
+                                            item.post.likes =
+                                                item.post.likes! + 1;
+                                          }
+                                          if (liked == 'disliked') {
+                                            item.post.likes =
+                                                item.post.likes! - 1;
+                                          }
+                                          logger.i(item.post.likes);
                                         },
                                       );
                                     },

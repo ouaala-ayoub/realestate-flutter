@@ -74,8 +74,8 @@ class PostAdvertProvider extends ChangeNotifier {
     logger.d(newValue);
     if (newValue != lastValue) {
       canContinue[3] = newValue;
-      notifyListeners();
     }
+    notifyListeners();
   }
 
   handleFeature(String feature) {
@@ -169,10 +169,11 @@ class PostAdvertProvider extends ChangeNotifier {
     final isLastStep = steps.length == 3;
     final complementaty = isLastStep ? stepsDone : true;
     final newValue = validData && complementaty;
+
     if (newValue != lastValue) {
       canContinue[2] = newValue;
-      notifyListeners();
     }
+    notifyListeners();
   }
 
   updateNextStatus() {

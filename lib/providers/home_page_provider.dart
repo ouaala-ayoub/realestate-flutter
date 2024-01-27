@@ -20,12 +20,14 @@ class HomePageProvider extends ChangeNotifier {
       _pagingController;
 
   bool newsLoading = false;
+  bool postsLoading = false;
 
   Either<dynamic, LatesNews> news = Right(LatesNews());
   Either<dynamic, List<Post>> posts = const Right([]);
 
   getPosts(SearchParams searchParams) async {
     try {
+      postsLoading = true;
       posts = await _postsHelper.fetshPosts(
           search: searchParams.search,
           category: searchParams.category,
@@ -52,6 +54,7 @@ class HomePageProvider extends ChangeNotifier {
           final nextPageKey = searchParams.page;
           _pagingController.appendPage(itemsAndLoadings, nextPageKey);
         }
+        postsLoading = false;
       });
     } catch (e) {
       logger.e(e);

@@ -91,6 +91,12 @@ class PostAdvertImagesStep extends StatelessWidget {
                             ));
                   },
                   child: SelectedImage(xfile: provider.data['media'][index]))),
+          provider.data['media'].isEmpty
+              ? const Text(
+                  'Please Enter images !',
+                  style: TextStyle(color: CupertinoColors.systemRed),
+                )
+              : const SizedBox(),
           const SizedBox(
             height: 10,
           ),

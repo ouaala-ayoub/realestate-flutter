@@ -22,6 +22,9 @@ class PropretyInfoStep extends StatelessWidget {
             header: headerRequired('Property Infos'),
             children: [
               CupertinoFormRow(
+                error: provider.data['type'] == null
+                    ? const Text('Please choose a type')
+                    : null,
                 prefix: const Text('Property Type'),
                 child: CupertinoButton(
                   onPressed: () =>
@@ -37,6 +40,9 @@ class PropretyInfoStep extends StatelessWidget {
               ),
               CupertinoFormRow(
                   prefix: const Text('Category'),
+                  error: provider.data['category'] == null
+                      ? const Text('Please choose a category')
+                      : null,
                   child: Center(
                     child: CupertinoButton(
                         child: Text(
@@ -50,6 +56,9 @@ class PropretyInfoStep extends StatelessWidget {
                         }),
                   )),
               CupertinoFormRow(
+                  error: provider.data['price'].text.isEmpty
+                      ? const Text('Please enter a price')
+                      : null,
                   prefix: const Text('Price (USD \$)'),
                   child: CupertinoTextFormFieldRow(
                     onChanged: (value) => provider.updateNextStatus2(),
@@ -62,6 +71,10 @@ class PropretyInfoStep extends StatelessWidget {
                     keyboardType: TextInputType.number,
                   )),
               CupertinoFormRow(
+                error: provider.data['type'] == 'Rent' &&
+                        provider.data['period'] == null
+                    ? const Text('Please choose a period')
+                    : null,
                 prefix: const Text('Period'),
                 child: Center(
                   child: CupertinoButton(
@@ -95,6 +108,10 @@ class PropretyInfoStep extends StatelessWidget {
               header: headerRequired('Contact Infos'),
               children: [
                 CupertinoFormRow(
+                    error: provider.data['phoneNumber'].text.isEmpty ||
+                            provider.data['phoneCode'] == null
+                        ? const Text('Please enter your contact number')
+                        : null,
                     prefix: CupertinoButton(
                       child: Row(
                         children: [
@@ -132,44 +149,49 @@ class PropretyInfoStep extends StatelessWidget {
                       controller: provider.data['phoneNumber'],
                     )),
                 CupertinoFormRow(
+                    error: !provider.data['contactPhone'] &&
+                            !provider.data['contactWhatsapp']
+                        ? const Text('Choose atleast one communication method')
+                        : null,
                     child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        const Icon(
-                          CupertinoIcons.phone,
-                          size: 24,
+                        Row(
+                          children: [
+                            const Icon(
+                              CupertinoIcons.phone,
+                              size: 24,
+                            ),
+                            CupertinoSwitch(
+                              value: provider.data['contactPhone'] ?? false,
+                              onChanged: (checked) {
+                                provider.setFields(['contactPhone'], [checked]);
+                              },
+                            )
+                          ],
                         ),
-                        CupertinoSwitch(
-                          value: provider.data['contactPhone'] ?? false,
-                          onChanged: (checked) {
-                            provider.setFields(['contactPhone'], [checked]);
-                          },
-                        )
+                        Row(children: [
+                          SvgPicture.asset(
+                            'assets/icons/whatsapp.svg',
+                            height: 24,
+                            width: 24,
+                            colorFilter: const ColorFilter.mode(
+                              CupertinoColors.activeGreen,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          CupertinoSwitch(
+                              value: provider.data['contactWhatsapp'] ?? false,
+                              onChanged: (checked) {
+                                provider
+                                    .setFields(['contactWhatsapp'], [checked]);
+                              })
+                        ]),
                       ],
-                    ),
-                    Row(children: [
-                      SvgPicture.asset(
-                        'assets/icons/whatsapp.svg',
-                        height: 24,
-                        width: 24,
-                        colorFilter: const ColorFilter.mode(
-                          CupertinoColors.activeGreen,
-                          BlendMode.srcIn,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      CupertinoSwitch(
-                          value: provider.data['contactWhatsapp'] ?? false,
-                          onChanged: (checked) {
-                            provider.setFields(['contactWhatsapp'], [checked]);
-                          })
-                    ]),
-                  ],
-                ))
+                    ))
               ])
         ],
       ),
@@ -187,13 +209,13 @@ class PropretyInfoStep extends StatelessWidget {
             style: const TextStyle(color: CupertinoColors.white, fontSize: 17),
           ),
         ),
-        const Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            'required*',
-            style: TextStyle(color: CupertinoColors.systemRed),
-          ),
-        )
+        // const Align(
+        //   alignment: Alignment.centerLeft,
+        //   child: Text(
+        //     'required*',
+        //     style: TextStyle(color: CupertinoColors.systemRed),
+        //   ),
+        // )
       ],
     );
   }

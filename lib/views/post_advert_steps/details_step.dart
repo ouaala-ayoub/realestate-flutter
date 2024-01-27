@@ -18,6 +18,9 @@ class DetailsStep extends StatelessWidget {
         header: const Text('Additional Informations'),
         children: [
           CupertinoFormRow(
+              error: provider.data['condition'] == null
+                  ? const Text('Please choose a condition')
+                  : null,
               prefix: const Text('Property Condition'),
               child: Center(
                 child: CupertinoButton(
@@ -29,36 +32,52 @@ class DetailsStep extends StatelessWidget {
                 ),
               )),
           indicativeRow('Number of Rooms :'),
-          CupertinoTextFormFieldRow(
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            onChanged: (value) => provider.updateNextStatus3(),
-            maxLength: 10,
-            placeholder: 'Enter',
-            controller: provider.data['numRooms'],
-            keyboardType: TextInputType.number,
+          CupertinoFormRow(
+            error: provider.data['numRooms'].text.isEmpty
+                ? const Text('required *')
+                : null,
+            child: CupertinoTextFormFieldRow(
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              onChanged: (value) => provider.updateNextStatus3(),
+              maxLength: 10,
+              placeholder: 'Enter',
+              controller: provider.data['numRooms'],
+              keyboardType: TextInputType.number,
+            ),
           ),
           indicativeRow('Number of Bathrooms :'),
-          CupertinoTextFormFieldRow(
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            onChanged: (value) => provider.updateNextStatus3(),
-            maxLength: 10,
-            placeholder: 'Enter',
-            controller: provider.data['numBathrooms'],
-            keyboardType: TextInputType.number,
+          CupertinoFormRow(
+            error: provider.data['numBathrooms'].text.isEmpty
+                ? const Text('required *')
+                : null,
+            child: CupertinoTextFormFieldRow(
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              onChanged: (value) => provider.updateNextStatus3(),
+              maxLength: 10,
+              placeholder: 'Enter',
+              controller: provider.data['numBathrooms'],
+              keyboardType: TextInputType.number,
+            ),
           ),
           indicativeRow('Floor infos :'),
-          DoubleTextFieldForm(
-              onChanged1: (value) => provider.updateNextStatus3(),
-              onChanged2: (value) => provider.updateNextStatus3(),
-              values: const [
-                'Floor Number',
-                'Out of',
-                'Floors in the building'
-              ],
-              controllers: [
-                provider.data['floorNumber'],
-                provider.data['floors']
-              ]),
+          CupertinoFormRow(
+            error: provider.data['floorNumber'].text.isEmpty ||
+                    provider.data['floors'].text.isEmpty
+                ? const Text('Floor informations required *')
+                : null,
+            child: DoubleTextFieldForm(
+                onChanged1: (value) => provider.updateNextStatus3(),
+                onChanged2: (value) => provider.updateNextStatus3(),
+                values: const [
+                  'Floor Number',
+                  'Out of',
+                  'Floors in the building'
+                ],
+                controllers: [
+                  provider.data['floorNumber'],
+                  provider.data['floors']
+                ]),
+          ),
           indicativeRow('Space :'),
           DoubleTextFieldForm(
               onChanged1: (value) {

@@ -12,7 +12,10 @@ class ItemChoiceProvider<T> extends ChangeNotifier {
       _filtred = itemsList;
     } else {
       _filtred = itemsList
-          .where((item) => item.toString().contains(enteredKeyword))
+          .where((item) => item
+              .toString()
+              .toLowerCase()
+              .contains(enteredKeyword.toLowerCase()))
           .toList();
     }
     notifyListeners();

@@ -22,7 +22,9 @@ class LocationDataStep extends StatelessWidget {
                 children: [
                   CupertinoFormRow(
                     prefix: const Text('Choose a country'),
-                    error: const Text('required *'),
+                    error: provider.data['country'] == null
+                        ? const Text('Please enter a country')
+                        : null,
                     child: Center(
                       child: CupertinoButton(
                           child: Text(provider.data['country'] ?? 'Select'),
@@ -34,7 +36,9 @@ class LocationDataStep extends StatelessWidget {
                   ),
                   CupertinoFormRow(
                     prefix: const Text('City'),
-                    error: const Text('required *'),
+                    error: provider.data['city'].text.isEmpty
+                        ? const Text('Please enter a city')
+                        : null,
                     child: CupertinoTextFormFieldRow(
                       onChanged: (value) => provider.updateNextStatus(),
                       placeholder: 'Enter a City',
@@ -62,9 +66,11 @@ class LocationDataStep extends StatelessWidget {
                 ),
                 children: [
                   CupertinoFormRow(
-                      error: const Text('required *'),
+                      error: provider.data['description'].text.isEmpty
+                          ? const Text('Please enter a description')
+                          : null,
                       child: CupertinoTextFormFieldRow(
-                        placeholder: 'Enter a description of the property',
+                        placeholder: 'Description',
                         controller: provider.data['description'],
                         onChanged: (value) => provider.updateNextStatus(),
                         minLines: 5,
