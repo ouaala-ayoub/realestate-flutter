@@ -29,8 +29,8 @@ class PostAdvertButtonPage extends StatelessWidget {
                     );
                   } else {
                     return ErrorScreen(
-                        refreshFunction: () => authProvider.fetshAuth(),
-                        message: 'Authentification error');
+                        refreshFunction: () => authProvider.fetshLateAuth(),
+                        message: 'Unexpected error');
                   }
                 },
                   (auth) => Center(

@@ -8,10 +8,11 @@ class PostsApi {
   Future<Either<dynamic, List<dynamic>>> fetshPosts(
       {SearchParams? searchParams}) async {
     try {
+      final params = searchParams?.toMap();
       const endpoint = 'https://realestatefy.vercel.app/api/posts';
       final res = await Dio().get(
         endpoint,
-        queryParameters: searchParams?.toMap(),
+        queryParameters: params,
       );
       return Right(res.data);
     } catch (e) {
@@ -69,6 +70,13 @@ class PostsApi {
     final endpoint = 'https://realestatefy.vercel.app/api/posts/${post['_id']}';
     final options = await retrieveCookieOptions();
     final res = await Dio(options).put(endpoint, data: jsonEncode(post));
+    return res.data;
+  }
+
+  Future<int> getPostsCount(Map<String, dynamic> params) async {
+    params['status'] = 'Approved';
+    const endpoint = 'https://realestatefy.vercel.app/api/posts/count';
+    final res = await Dio().get(endpoint, queryParameters: params);
     return res.data;
   }
 }

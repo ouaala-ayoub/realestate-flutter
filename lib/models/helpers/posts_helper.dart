@@ -33,7 +33,6 @@ class PostsHelper {
           page: page,
           features: features);
       final res = await _api.fetshPosts(searchParams: searchParams);
-      logger.i('getPosts response $res');
       return res.fold(
           (l) => Left(l),
           (r) => Right(
@@ -180,5 +179,10 @@ class PostsHelper {
       final res = await _addPost(body);
       return res;
     });
+  }
+
+  Future<int> getPostsCount(Map<String, dynamic> params) async {
+    final res = await _api.getPostsCount(params);
+    return res;
   }
 }

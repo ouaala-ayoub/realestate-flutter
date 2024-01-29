@@ -126,7 +126,7 @@ class ReportPage extends StatelessWidget {
                       ],
                     ),
                   ),
-                  CupertinoButton(
+                  CupertinoButton.filled(
                       child: const Text(
                         'Submit',
                         style: TextStyle(fontSize: 20),
@@ -210,7 +210,10 @@ class ReportPage extends StatelessWidget {
                                     ],
                                   ));
                         }
-                      })
+                      }),
+                  const SizedBox(
+                    height: 10,
+                  )
                 ],
               ),
       ),

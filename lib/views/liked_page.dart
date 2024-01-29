@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:realestate/providers/home_page_provider.dart';
 import 'package:realestate/providers/liked_provider.dart';
 import 'package:realestate/providers/search_provider.dart';
 import 'package:realestate/views/error_widget.dart';
@@ -31,7 +32,7 @@ class LikedPage extends StatelessWidget {
                   } else {
                     return ErrorScreen(
                       message: 'Unexpected error',
-                      refreshFunction: () => provider.fetshAuth(),
+                      refreshFunction: () => provider.fetshLateAuth(),
                     );
                   }
                 },
@@ -86,6 +87,9 @@ class LikedPage extends StatelessWidget {
                                                   likedProvider
                                                       .fetshLikedPosts(user.id);
                                                 });
+                                                context
+                                                    .read<HomePageProvider>()
+                                                    .unlikeLocaly(postId);
                                               },
                                               countryInfo: country,
                                               type: UseType.liked,

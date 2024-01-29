@@ -35,7 +35,7 @@ class SettingsPage extends StatelessWidget {
                       } else {
                         return ErrorScreen(
                           message: 'Unexpected error',
-                          refreshFunction: () => authProvider.fetshAuth(),
+                          refreshFunction: () => authProvider.fetshLateAuth(),
                         );
                       }
                     },

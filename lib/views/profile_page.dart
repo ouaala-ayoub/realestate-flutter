@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:realestate/main.dart';
+import 'package:realestate/models/core/post/post.dart';
 import 'package:realestate/providers/posts_list_provider.dart';
 import 'package:realestate/views/error_widget.dart';
 import 'package:realestate/views/post_edit_widget.dart';
@@ -61,37 +62,54 @@ class _ProfilePageState extends State<ProfilePage> {
                                         ),
                                       ))
                                     : Expanded(
-                                        child: ListView.builder(
-                                            shrinkWrap: true,
-                                            itemCount: posts.length,
-                                            itemBuilder: (context, index) {
-                                              final post = posts[index];
-                                              final country = context
-                                                  .read<SearchProvider>()
-                                                  .countries
-                                                  .fold((l) => null, (r) {
-                                                try {
-                                                  return r.firstWhere(
-                                                      (element) =>
-                                                          element.name ==
-                                                          post.location
-                                                              ?.country);
-                                                } catch (e) {
-                                                  logger.e('element not found');
-                                                  return null;
-                                                }
-                                              });
-                                              return PostEditWidget(
-                                                  onLongPressed: () {
-                                                    showOptionsPopUp(context,
-                                                        provider, post.id!);
-                                                  },
-                                                  type: UseType.edit,
-                                                  post: post,
-                                                  countryInfo: country,
-                                                  onClicked: () => context.push(
-                                                      '/post_edit/${post.id}'));
-                                            }),
+                                        child: CustomScrollView(
+                                          shrinkWrap: true,
+                                          slivers: [
+                                            CupertinoSliverRefreshControl(
+                                              onRefresh: () async {
+                                                await context
+                                                    .read<PostsListProvider>()
+                                                    .fetshUserPosts(
+                                                        widget.userId);
+                                              },
+                                            ),
+                                            SliverList.builder(
+                                                itemCount: posts.length,
+                                                itemBuilder: (context, index) {
+                                                  final post = posts[index];
+                                                  final country = context
+                                                      .read<SearchProvider>()
+                                                      .countries
+                                                      .fold((l) => null, (r) {
+                                                    try {
+                                                      return r.firstWhere(
+                                                          (element) =>
+                                                              element.name ==
+                                                              post.location
+                                                                  ?.country);
+                                                    } catch (e) {
+                                                      logger.e(
+                                                          'element not found');
+                                                      return null;
+                                                    }
+                                                  });
+                                                  return PostEditWidget(
+                                                      onLongPressed: () {
+                                                        showOptionsPopUp(
+                                                            context,
+                                                            provider,
+                                                            post.id!,
+                                                            post);
+                                                      },
+                                                      type: UseType.edit,
+                                                      post: post,
+                                                      countryInfo: country,
+                                                      onClicked: () => context.push(
+                                                          '/post_edit/${post.id}'));
+                                                })
+                                          ],
+                                          // child: postsList(posts, provider),
+                                        ),
                                       )
                               ]),
                             )),
@@ -99,19 +117,36 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Future<dynamic> showOptionsPopUp(
-      BuildContext context, PostsListProvider provider, String postId) {
+  Future<dynamic> showOptionsPopUp(BuildContext context,
+      PostsListProvider provider, String postId, Post post) {
     return showCupertinoModalPopup(
         context: context,
         builder: (context) => CupertinoActionSheet(
               actions: [
-                // CupertinoActionSheetAction(
-                //     onPressed: () {
-                //       //todo write this function
-                //       context.pop();
-                //     },
-                //     child: const Text('Set Out Of Order',
-                //         style: TextStyle(color: CupertinoColors.white))),
+                CupertinoActionSheetAction(
+                    onPressed: () {
+                      final newStatus = post.status == 'Approved'
+                          ? 'Out Of Order'
+                          : 'Approved';
+                      post.status != 'Approved' && post.status != 'Out Of Order'
+                          ? indicativeDialog(
+                              context,
+                              'Your post should be approved by admins first !',
+                              'Ok')
+                          : (provider.setOutOfOrder(
+                              {'_id': post.id, 'status': newStatus},
+                              onSuccess: (res) {
+                              logger.i(res);
+                              context.pop();
+                              provider.localySetStatus(newStatus, postId);
+                            }, onFail: (e) {
+                              logger.e(e);
+                              indicativeDialog(
+                                  context, 'Something went wrong', 'Cancel');
+                            }));
+                    },
+                    child: const Text('Set Out Of Order',
+                        style: TextStyle(color: CupertinoColors.white))),
                 CupertinoActionSheetAction(
                     onPressed: () => showDeleteDialog((context) {
                           provider.deletePost(postId, onSuccess: (message) {
@@ -134,6 +169,28 @@ class _ProfilePageState extends State<ProfilePage> {
                       'Cancel',
                       style: TextStyle(color: CupertinoColors.white),
                     ))
+              ],
+            ));
+  }
+
+  Future<dynamic> indicativeDialog(
+      BuildContext context, String message, String buttonText) {
+    return showCupertinoDialog(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+              content: Text(
+                message,
+                style:
+                    const TextStyle(color: CupertinoColors.white, fontSize: 16),
+              ),
+              actions: [
+                CupertinoDialogAction(
+                  isDestructiveAction: true,
+                  child: Text(
+                    buttonText,
+                  ),
+                  onPressed: () => context.pop(),
+                )
               ],
             ));
   }

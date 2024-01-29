@@ -12,7 +12,9 @@ import 'package:realestate/views/post_widget.dart';
 import '../models/helpers/function_helpers.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({
+    super.key,
+  });
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -20,6 +22,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<bool> loadings = [];
+
   @override
   void initState() {
     final homeProvider = context.read<HomePageProvider>();
@@ -86,28 +89,31 @@ class _HomePageState extends State<HomePage> {
 
                     children: {
                       for (var element in types)
-                        element: Padding(
-                          padding: const EdgeInsets.only(top: 5, bottom: 5),
-                          child: Text(
-                            element,
-                            style: TextStyle(
-                                color: searchProvider.searchParams.type ==
-                                            element ||
-                                        (element == 'All' &&
-                                            searchProvider.searchParams.type ==
-                                                null)
-                                    ? CupertinoColors.black
-                                    : CupertinoColors.white),
+                        element: GestureDetector(
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 5, bottom: 5),
+                            child: Text(
+                              element,
+                              style: TextStyle(
+                                  color: searchProvider.searchParams.type ==
+                                              element ||
+                                          (element == 'All' &&
+                                              searchProvider
+                                                      .searchParams.type ==
+                                                  null)
+                                      ? CupertinoColors.black
+                                      : CupertinoColors.white),
+                            ),
                           ),
                         )
                     },
                     onValueChanged: (String? value) {
-                      //set postLoading
                       //todo fix the fast click to another type problem
-                      logger.i(value);
                       searchProvider.setSelectedType(value);
                       searchProvider.searchParams.page = 1;
                       homeProvider.pagingController.refresh();
+                      logger.i(searchProvider.searchParams.toMap().toString());
+                      // homeProvider.getPosts(searchProvider.searchParams);
                     },
                   ),
                 ),
@@ -124,6 +130,8 @@ class _HomePageState extends State<HomePage> {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10, right: 10),
                     child: CustomScrollView(
+                      controller: homeProvider.scrollController,
+                      physics: const AlwaysScrollableScrollPhysics(),
                       shrinkWrap: true,
                       slivers: [
                         CupertinoSliverRefreshControl(
@@ -223,129 +231,145 @@ class _HomePageState extends State<HomePage> {
                             },
                           ),
                         ),
-                        SliverToBoxAdapter(
-                          child: PagedListView(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            pagingController: homeProvider.pagingController,
-                            builderDelegate: PagedChildBuilderDelegate<
-                                    PostAndLoading>(
-                                noItemsFoundIndicatorBuilder: (context) =>
-                                    Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        const Text('No posts found'),
-                                        CupertinoButton(
-                                            child: const Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Icon(CupertinoIcons.refresh),
-                                                SizedBox(
-                                                  width: 5,
-                                                ),
-                                                Text('Refresh'),
-                                              ],
-                                            ),
-                                            onPressed: () {
-                                              searchProvider.refreshParams();
-                                              homeProvider.pagingController
-                                                  .refresh();
-                                            })
-                                      ],
-                                    ),
-                                firstPageProgressIndicatorBuilder: (context) {
-                                  loadings = [];
-                                  return const CupertinoActivityIndicator();
-                                },
-                                newPageProgressIndicatorBuilder: (context) =>
-                                    const CupertinoActivityIndicator(),
-                                itemBuilder: (context, item, index) {
-                                  final country = searchProvider.countries
-                                      .fold((l) => null, (r) {
-                                    try {
-                                      return r.firstWhere((element) =>
-                                          element.name ==
-                                          item.post.location?.country);
-                                    } catch (e) {
-                                      logger.e('element not found');
-                                      return null;
-                                    }
-                                  });
-                                  return Consumer<RealestateAuthProvider>(
-                                    builder: (context, authProvider, _) {
-                                      final liked = authProvider.auth?.fold(
-                                          (l) => null,
-                                          (user) => user.likes
-                                              ?.contains(item.post.id));
+                        PagedSliverList(
+                          pagingController: homeProvider.pagingController,
+                          builderDelegate: PagedChildBuilderDelegate<
+                                  PostAndLoading>(
+                              firstPageErrorIndicatorBuilder: (context) =>
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Text('Something went Wrong!'),
+                                      const Text('Please try again later'),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      CupertinoButton.filled(
+                                          child: const Text('Refresh'),
+                                          onPressed: () {
+                                            context
+                                                .read<RealestateAuthProvider>()
+                                                .fetshLateAuth();
+                                            searchProvider.getCountries();
+                                            searchProvider.getCategories();
+                                            homeProvider.getNews();
+                                            homeProvider.getPosts(
+                                                searchProvider.searchParams);
+                                          }),
+                                    ],
+                                  ),
+                              noItemsFoundIndicatorBuilder: (context) => Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      const Text('No posts found'),
+                                      CupertinoButton(
+                                          child: const Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(CupertinoIcons.refresh),
+                                              SizedBox(
+                                                width: 5,
+                                              ),
+                                              Text('Refresh'),
+                                            ],
+                                          ),
+                                          onPressed: () {
+                                            searchProvider.refreshParams();
+                                            homeProvider.pagingController
+                                                .refresh();
+                                          })
+                                    ],
+                                  ),
+                              firstPageProgressIndicatorBuilder: (context) {
+                                loadings = [];
+                                return const CupertinoActivityIndicator();
+                              },
+                              newPageProgressIndicatorBuilder: (context) =>
+                                  const CupertinoActivityIndicator(),
+                              itemBuilder: (context, item, index) {
+                                final country = searchProvider.countries
+                                    .fold((l) => null, (r) {
+                                  try {
+                                    return r.firstWhere((element) =>
+                                        element.name ==
+                                        item.post.location?.country);
+                                  } catch (e) {
+                                    logger.e('element not found');
+                                    return null;
+                                  }
+                                });
+                                return Consumer<RealestateAuthProvider>(
+                                  builder: (context, authProvider, _) {
+                                    final liked = authProvider.auth?.fold(
+                                        (l) => null,
+                                        (user) =>
+                                            user.likes?.contains(item.post.id));
 
-                                      return PostCard(
-                                        type: UseType.home,
-                                        loading: item.loading,
-                                        isLiked: liked == true,
-                                        countryInfo: country,
-                                        post: item.post,
-                                        onHeartClicked: (postId) {
-                                          if (item.loading) {
-                                            return;
-                                          }
-                                          if (liked == null) {
-                                            //show a dialog
-                                            logger.i('not logged in');
-                                          } else if (liked == false) {
+                                    return PostCard(
+                                      type: UseType.home,
+                                      loading: item.loading,
+                                      isLiked: liked == true,
+                                      countryInfo: country,
+                                      post: item.post,
+                                      onHeartClicked: (postId) {
+                                        if (item.loading) {
+                                          return;
+                                        }
+                                        if (liked == null) {
+                                          //show a dialog
+                                          logger.i('not logged in');
+                                        } else if (liked == false) {
+                                          homeProvider.setLoading(true, index);
+                                          authProvider.like(postId,
+                                              onSuccess: () {
                                             homeProvider.setLoading(
-                                                true, index);
-                                            authProvider.like(postId,
-                                                onSuccess: () {
-                                              homeProvider.setLoading(
-                                                  false, index);
-                                              authProvider.fetshAuth();
-                                              authProvider.auth?.fold(
-                                                  (l) => null,
-                                                  (user) => context
-                                                      .read<LikedPageProvider>()
-                                                      .fetshLikedPosts(
-                                                          user.id));
-                                            });
-                                          } else if (liked == true) {
+                                                false, index);
+                                            authProvider.fetshAuth();
+                                            authProvider.auth?.fold(
+                                                (l) => null,
+                                                (user) => context
+                                                    .read<LikedPageProvider>()
+                                                    .fetshLikedPosts(user.id));
+                                          });
+                                        } else if (liked == true) {
+                                          homeProvider.setLoading(true, index);
+                                          authProvider.unlike(postId,
+                                              onSuccess: () {
                                             homeProvider.setLoading(
-                                                true, index);
-                                            authProvider.unlike(postId,
-                                                onSuccess: () {
-                                              homeProvider.setLoading(
-                                                  false, index);
-                                              authProvider.fetshAuth();
-                                              authProvider.auth?.fold(
-                                                  (l) => null,
-                                                  (user) => context
-                                                      .read<LikedPageProvider>()
-                                                      .fetshLikedPosts(
-                                                          user.id));
-                                            });
-                                          }
-                                        },
-                                        onClicked: () async {
-                                          final liked = await context.push(
-                                              '/postPage',
-                                              extra: item.post);
-                                          logger.d(liked);
-                                          if (liked == 'liked') {
-                                            item.post.likes =
-                                                item.post.likes! + 1;
-                                          }
-                                          if (liked == 'disliked') {
-                                            item.post.likes =
-                                                item.post.likes! - 1;
-                                          }
-                                          logger.i(item.post.likes);
-                                        },
-                                      );
-                                    },
-                                  );
-                                }),
-                          ),
+                                                false, index);
+                                            authProvider.fetshAuth();
+                                            authProvider.auth?.fold(
+                                                (l) => null,
+                                                (user) => context
+                                                    .read<LikedPageProvider>()
+                                                    .fetshLikedPosts(user.id));
+                                          });
+                                        }
+                                      },
+                                      onClicked: () async {
+                                        final liked = await context.push(
+                                            '/postPage',
+                                            extra: item.post);
+                                        logger.d(liked);
+                                        if (liked == 'liked') {
+                                          item.post.likes =
+                                              item.post.likes! + 1;
+                                        }
+                                        if (liked == 'disliked') {
+                                          item.post.likes =
+                                              item.post.likes! - 1;
+                                        }
+                                        logger.i(item.post.likes);
+                                      },
+                                    );
+                                  },
+                                );
+                              }),
                         ),
                         const SliverToBoxAdapter(
                           child: SizedBox(

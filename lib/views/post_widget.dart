@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:realestate/models/core/constants.dart';
 import 'package:realestate/models/core/country.dart';
 import 'package:svg_flutter/svg.dart';
 import '../models/core/post/post.dart';
@@ -74,7 +75,7 @@ class PostCard extends StatelessWidget {
               child: Image.network(
                 // errorBuilder: (holyContext, error, stackTrace) =>
                 //     Center(child: Text('error')),
-                post.media?[0],
+                post.media!.isNotEmpty ? post.media![0] : '',
                 errorBuilder: (context, obj, trace) => const SizedBox(
                   height: 200,
                   child: Icon(
@@ -167,7 +168,33 @@ class PostCard extends StatelessWidget {
                 ],
               ),
             ),
-            // Add your RecyclerView equivalent widget here
+            Row(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: List.generate(
+                        post.features?.length ?? 0,
+                        (index) => Padding(
+                          padding: const EdgeInsets.only(
+                              right: 10, left: 10, bottom: 10),
+                          child: SvgPicture.asset(
+                            landMarks[post.features?[index]] ?? '',
+                            height: 24,
+                            width: 32,
+                            colorFilter: const ColorFilter.mode(
+                              CupertinoColors.white,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            )
           ],
         ),
       ),

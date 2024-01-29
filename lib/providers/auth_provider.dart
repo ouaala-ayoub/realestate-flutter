@@ -14,8 +14,17 @@ class RealestateAuthProvider extends ChangeNotifier {
   Either<dynamic, RealestateUser>? get auth => _auth;
   Either<dynamic, RealestateUser>? _loginRes;
   Either<dynamic, RealestateUser>? get loginRes => _loginRes;
+
   fetshAuth() async {
     loading = true;
+    _auth = await _helper.fetshAuth();
+    loading = false;
+    notifyListeners();
+  }
+
+  fetshLateAuth() async {
+    loading = true;
+    notifyListeners();
     _auth = await _helper.fetshAuth();
     loading = false;
     notifyListeners();

@@ -13,12 +13,13 @@ class PostsListProvider extends ChangeNotifier {
 
   //todo add search
 
-  fetshUserPosts(userId) async {
+  Future fetshUserPosts(userId) async {
     loading = true;
     posts = await _helper.fetshUserPosts(userId);
     _filtred = posts;
     loading = false;
     notifyListeners();
+    return true;
   }
 
   deletePost(postId, {onSuccess, onFail}) async {
@@ -48,5 +49,20 @@ class PostsListProvider extends ChangeNotifier {
       });
     }
     notifyListeners();
+  }
+
+  setOutOfOrder(Map<String, dynamic> reqBody,
+      {required Function(dynamic) onSuccess,
+      required Function(dynamic) onFail}) async {
+    final res = await _helper.updatePost(reqBody);
+    res.fold((e) => onFail(e), (r) => onSuccess(r));
+  }
+
+  localySetStatus(String newStatus, String postId) {
+    posts.fold((l) => null, (posts) {
+      final post = posts.firstWhere((element) => element.id == postId);
+      post.status = newStatus;
+      notifyListeners();
+    });
   }
 }

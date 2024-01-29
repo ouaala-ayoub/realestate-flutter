@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -46,7 +47,15 @@ class _PostEditPageState extends State<PostEditPage> {
                   if (provider.firstTime) {
                     provider.postBuilder = post.toMap()
                       ..removeWhere((key, value) => value == null);
-                    provider.initialiseBuilder();
+                    final country = context
+                        .read<SearchProvider>()
+                        .countries
+                        .fold(
+                            (l) => null,
+                            (countries) => countries.firstWhere((element) =>
+                                provider.postBuilder['contact']['code'] ==
+                                element.dialCode));
+                    provider.initialiseBuilder(countryFlag: country?.image);
                     logger.i(provider.postBuilder);
                     provider.firstTime = false;
                   }
@@ -304,10 +313,31 @@ class _PostEditPageState extends State<PostEditPage> {
                                           'Please provide a description')
                                       : null,
                                   child: CupertinoTextField(
-                                    prefix: Padding(
-                                      padding: const EdgeInsets.only(left: 5),
-                                      child: smallTitle('Description :'),
+                                    textAlignVertical: TextAlignVertical.top,
+                                    prefix: Container(
+                                      height:
+                                          100, // Adjust the height as needed
+                                      child: const Align(
+                                        alignment: Alignment.topCenter,
+                                        child: Padding(
+                                          padding: EdgeInsets.only(left: 5),
+                                          child: Text(
+                                            'Description :',
+                                            style: TextStyle(
+                                                color: CupertinoColors
+                                                    .systemYellow),
+                                          ),
+                                        ), // Replace this with your actual prefix widget
+                                      ),
                                     ),
+                                    // prefix: const Padding(
+                                    //     padding: EdgeInsets.only(left: 5),
+                                    //     child: Text(
+                                    //       'Description :',
+                                    //       style: TextStyle(
+                                    //           color:
+                                    //               CupertinoColors.systemYellow),
+                                    //     )),
                                     placeholder: 'Description',
                                     controller:
                                         provider.postBuilder['description'],

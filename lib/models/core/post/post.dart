@@ -10,7 +10,7 @@ class Post {
   final String? category;
   final int? price;
   final Location? location;
-  final String? status;
+  String? status;
   final List<dynamic>? rejectReasons;
   final dynamic owner;
   final String? type;

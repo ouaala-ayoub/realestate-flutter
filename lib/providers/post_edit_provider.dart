@@ -50,7 +50,7 @@ class PostEditProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void initialiseBuilder() {
+  void initialiseBuilder({String? countryFlag}) {
     postBuilder.remove('owner');
     postBuilder.remove('rejectReasons');
     postBuilder['price'] =
@@ -61,6 +61,8 @@ class PostEditProvider extends ChangeNotifier {
         postBuilder['contact']['type'] == 'Call';
     postBuilder['contact']['phone'] =
         TextEditingController(text: postBuilder['contact']['phone']);
+
+    postBuilder['phoneFlag'] = countryFlag;
     postBuilder['location']['city'] =
         TextEditingController(text: postBuilder['location']['city']);
     postBuilder['location']['area'] =
@@ -137,6 +139,7 @@ class PostEditProvider extends ChangeNotifier {
                         : valueInside)))
             : MapEntry(key, value))
       ..removeWhere((key, value) => value == null)
+      ..remove('phoneFlag')
       ..remove('whatsapp')
       ..remove('call')
       ..remove('foot2');

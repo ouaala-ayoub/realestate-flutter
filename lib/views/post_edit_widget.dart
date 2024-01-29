@@ -29,17 +29,32 @@ class PostEditWidget extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              '${post.status}',
-              style: TextStyle(
-                  color: post.status == 'Rejected'
-                      ? CupertinoColors.systemRed
-                      : post.status == 'Pending'
-                          ? CupertinoColors.activeOrange
-                          : post.status == 'Approved'
-                              ? CupertinoColors.activeGreen
-                              : CupertinoColors.white,
-                  fontSize: 20),
+            Padding(
+              padding: const EdgeInsets.only(right: 10, left: 10, top: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '${post.status}',
+                    style: TextStyle(
+                        color: post.status == 'Rejected'
+                            ? CupertinoColors.systemRed
+                            : post.status == 'Pending'
+                                ? CupertinoColors.activeOrange
+                                : post.status == 'Approved'
+                                    ? CupertinoColors.activeGreen
+                                    : CupertinoColors.white,
+                        fontSize: 20),
+                  ),
+                  GestureDetector(
+                    onTap: onLongPressed,
+                    child: const Icon(
+                      CupertinoIcons.ellipsis,
+                      color: CupertinoColors.white,
+                    ),
+                  )
+                ],
+              ),
             ),
             PostCard(
               onLongPress: onLongPressed,

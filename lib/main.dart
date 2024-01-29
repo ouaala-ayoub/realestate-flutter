@@ -8,6 +8,7 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:realestate/models/core/post/post.dart';
 import 'package:realestate/providers/auth_provider.dart';
+import 'package:realestate/providers/home_page_provider.dart';
 import 'package:realestate/providers/liked_provider.dart';
 import 'package:realestate/providers/post_edit_provider.dart';
 import 'package:realestate/providers/post_page_provider.dart';
@@ -118,6 +119,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => SearchProvider()),
         ChangeNotifierProvider(create: (context) => RealestateAuthProvider()),
         ChangeNotifierProvider(create: (context) => LikedPageProvider()),
+        ChangeNotifierProvider(create: (context) => HomePageProvider()),
       ],
       child: CupertinoApp.router(
         debugShowCheckedModeBanner: false,

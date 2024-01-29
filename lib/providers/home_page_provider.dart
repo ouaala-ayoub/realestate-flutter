@@ -5,14 +5,15 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:realestate/main.dart';
 import 'package:realestate/models/core/lates_news.dart';
 import 'package:realestate/models/core/post/post.dart';
+import 'package:realestate/models/core/price_filter.dart';
 import 'package:realestate/models/helpers/posts_helper.dart';
 import 'package:realestate/models/helpers/static_data_helper.dart';
-
 import '../models/core/search_params.dart';
 
 class HomePageProvider extends ChangeNotifier {
   final _helper = StaticDataHelper();
   final _postsHelper = PostsHelper();
+  final ScrollController scrollController = ScrollController();
 
   final PagingController<int, PostAndLoading> _pagingController =
       PagingController(firstPageKey: 1);
@@ -20,15 +21,42 @@ class HomePageProvider extends ChangeNotifier {
       _pagingController;
 
   bool newsLoading = false;
-  bool postsLoading = false;
 
   Either<dynamic, LatesNews> news = Right(LatesNews());
-  Either<dynamic, List<Post>> posts = const Right([]);
+
+  unlikeLocaly(String postId) {
+    final index = pagingController.itemList
+        ?.indexWhere((element) => element.post.id == postId);
+
+    if (index != null) {
+      pagingController.itemList![index].post.likes =
+          pagingController.itemList![index].post.likes! - 1;
+      notifyListeners();
+    }
+  }
+
+  void scrollToTop() {
+    scrollController.animateTo(
+      0.0,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+  }
 
   getPosts(SearchParams searchParams) async {
     try {
-      postsLoading = true;
-      posts = await _postsHelper.fetshPosts(
+      //todo tell backend dev
+      logger.i('called numPosts');
+      final oldType = searchParams.type;
+      int numPosts;
+      numPosts = await _postsHelper.getPostsCount(searchParams.toMap());
+      if (searchParams.type != oldType) {
+        numPosts = await _postsHelper.getPostsCount(searchParams.toMap());
+      }
+      logger.i('numPosts $numPosts');
+      // const numPosts = 10;
+      logger.i('called fetshPosts');
+      final posts = await _postsHelper.fetshPosts(
           search: searchParams.search,
           category: searchParams.category,
           city: searchParams.city,
@@ -42,9 +70,25 @@ class HomePageProvider extends ChangeNotifier {
         logger.e('caught a error in the folding process');
         throw Exception('Unxepected error');
       }, (items) {
-        final isLastPage = items.isEmpty;
+        // logger.d('got for ${searchParams.type}');
+        // logger.d('got for ${items.length}');
+        final isLastPage = items.length == numPosts;
+        switch (searchParams.priceFilter) {
+          case PriceFilter.high:
+            {
+              items.sort((a, b) => b.price!.compareTo(a.price!));
+            }
+          case PriceFilter.low:
+            {
+              items.sort((a, b) => a.price!.compareTo(b.price!));
+            }
+          case null:
+            {}
+        }
         final itemsAndLoadings =
             items.map((post) => PostAndLoading(post, false)).toList();
+
+        logger.i('items length ${items.length}, numPosts $numPosts');
         if (isLastPage) {
           // todo fix broken logic
           _pagingController.appendLastPage(itemsAndLoadings);
@@ -54,7 +98,6 @@ class HomePageProvider extends ChangeNotifier {
           final nextPageKey = searchParams.page;
           _pagingController.appendPage(itemsAndLoadings, nextPageKey);
         }
-        postsLoading = false;
       });
     } catch (e) {
       logger.e(e);
