@@ -99,7 +99,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                                             context,
                                                             provider,
                                                             post.id!,
-                                                            post);
+                                                            post,
+                                                            widget.userId);
                                                       },
                                                       type: UseType.edit,
                                                       post: post,
@@ -118,7 +119,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<dynamic> showOptionsPopUp(BuildContext context,
-      PostsListProvider provider, String postId, Post post) {
+      PostsListProvider provider, String postId, Post post, String userId) {
     return showCupertinoModalPopup(
         context: context,
         builder: (context) => CupertinoActionSheet(
@@ -153,10 +154,17 @@ class _ProfilePageState extends State<ProfilePage> {
                             logger.i('message $message');
                             context.pop();
                             context.pop();
+                            indicativeDialog(
+                                context, 'Post deleted with success', 'Ok');
+                            provider.fetshUserPosts(userId);
                           }, onFail: (e) {
                             // logger.e(e);
                             context.pop();
                             context.pop();
+                            indicativeDialog(
+                                context,
+                                'Something went wrong deleting this post',
+                                'Cancel');
                           });
                         }),
                     isDestructiveAction: true,

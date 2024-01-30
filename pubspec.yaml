@@ -57,6 +57,7 @@ dependencies:
   firebase_app_check: 
   share_plus: 
   flutter_launcher_icons :
+  uuid :
     
 flutter_launcher_icons:
   image_path : 'assets/icons/launcher_icon.jpg'

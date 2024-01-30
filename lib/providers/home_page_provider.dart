@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -11,6 +12,8 @@ import 'package:realestate/models/helpers/static_data_helper.dart';
 import '../models/core/search_params.dart';
 
 class HomePageProvider extends ChangeNotifier {
+  static List<CancelToken> tokens = [];
+  static const _pageSize = 20;
   final _helper = StaticDataHelper();
   final _postsHelper = PostsHelper();
   final ScrollController scrollController = ScrollController();
@@ -21,6 +24,7 @@ class HomePageProvider extends ChangeNotifier {
       _pagingController;
 
   bool newsLoading = false;
+  bool postsLoading = false;
 
   Either<dynamic, LatesNews> news = Right(LatesNews());
 
@@ -44,18 +48,8 @@ class HomePageProvider extends ChangeNotifier {
   }
 
   getPosts(SearchParams searchParams) async {
+    postsLoading = true;
     try {
-      //todo tell backend dev
-      logger.i('called numPosts');
-      final oldType = searchParams.type;
-      int numPosts;
-      numPosts = await _postsHelper.getPostsCount(searchParams.toMap());
-      if (searchParams.type != oldType) {
-        numPosts = await _postsHelper.getPostsCount(searchParams.toMap());
-      }
-      logger.i('numPosts $numPosts');
-      // const numPosts = 10;
-      logger.i('called fetshPosts');
       final posts = await _postsHelper.fetshPosts(
           search: searchParams.search,
           category: searchParams.category,
@@ -72,7 +66,7 @@ class HomePageProvider extends ChangeNotifier {
       }, (items) {
         // logger.d('got for ${searchParams.type}');
         // logger.d('got for ${items.length}');
-        final isLastPage = items.length == numPosts;
+        final isLastPage = items.length < _pageSize;
         switch (searchParams.priceFilter) {
           case PriceFilter.high:
             {
@@ -88,7 +82,7 @@ class HomePageProvider extends ChangeNotifier {
         final itemsAndLoadings =
             items.map((post) => PostAndLoading(post, false)).toList();
 
-        logger.i('items length ${items.length}, numPosts $numPosts');
+        logger.i('items length ${items.length}');
         if (isLastPage) {
           // todo fix broken logic
           _pagingController.appendLastPage(itemsAndLoadings);
@@ -103,6 +97,7 @@ class HomePageProvider extends ChangeNotifier {
       logger.e(e);
       _pagingController.error = e;
     }
+    postsLoading = false;
   }
 
   setLoading(loading, index) {

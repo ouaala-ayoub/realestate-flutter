@@ -9,6 +9,7 @@ import 'package:realestate/models/core/country.dart';
 import 'package:realestate/providers/filterabli_choices_list.dart';
 import 'package:realestate/views/country_info.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:uuid/uuid.dart';
 import '../../main.dart';
 import '../../providers/post_advert_provider.dart';
 import '../../providers/search_provider.dart';
@@ -268,6 +269,9 @@ launchWebSite(String url) async {
     throw Exception('Could not launch $url');
   }
 }
+
+String newId() => const Uuid().v4();
+  
 
 // _launchInstagram() async {
 //   const nativeUrl = "instagram://user?username=severinas_app";

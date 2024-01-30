@@ -10,10 +10,7 @@ class PostsApi {
     try {
       final params = searchParams?.toMap();
       const endpoint = 'https://realestatefy.vercel.app/api/posts';
-      final res = await Dio().get(
-        endpoint,
-        queryParameters: params,
-      );
+      final res = await Dio().get(endpoint, queryParameters: params);
       return Right(res.data);
     } catch (e) {
       return Left(e);

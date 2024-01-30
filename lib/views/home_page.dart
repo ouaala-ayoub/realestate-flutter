@@ -84,9 +84,9 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(
                   width: double.infinity,
                   child: CupertinoSegmentedControl<String>(
-                    //todo the selected value should get set in the group
+                    pressedColor:
+                        CupertinoTheme.of(context).primaryContrastingColor,
                     groupValue: searchProvider.searchParams.type ?? 'All',
-
                     children: {
                       for (var element in types)
                         element: GestureDetector(
@@ -109,10 +109,13 @@ class _HomePageState extends State<HomePage> {
                     },
                     onValueChanged: (String? value) {
                       //todo fix the fast click to another type problem
-                      searchProvider.setSelectedType(value);
-                      searchProvider.searchParams.page = 1;
-                      homeProvider.pagingController.refresh();
-                      logger.i(searchProvider.searchParams.toMap().toString());
+                      if (!homeProvider.postsLoading) {
+                        searchProvider.setSelectedType(value);
+                        searchProvider.searchParams.page = 1;
+                        homeProvider.pagingController.refresh();
+                        logger
+                            .i(searchProvider.searchParams.toMap().toString());
+                      }
                       // homeProvider.getPosts(searchProvider.searchParams);
                     },
                   ),
