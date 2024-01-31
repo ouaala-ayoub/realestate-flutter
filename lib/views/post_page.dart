@@ -77,13 +77,11 @@ class _PostPageState extends State<PostPage> {
               navigationBar: CupertinoNavigationBar(
                   middle: const Text('Post page'),
                   trailing: GestureDetector(
-                    child: const Icon(CupertinoIcons.ellipsis),
+                    child: const Icon(CupertinoIcons.flag,
+                        size: 24, color: CupertinoColors.white),
                     onTap: () => showCupertinoModalPopup(
                         context: context,
                         builder: (context) => CupertinoActionSheet(
-                              title: const Text('More',
-                                  style:
-                                      TextStyle(color: CupertinoColors.white)),
                               actions: [
                                 CupertinoActionSheetAction(
                                   isDestructiveAction: true,
@@ -130,9 +128,11 @@ class _PostPageState extends State<PostPage> {
                         height: 10,
                       ),
                     ),
+                    //todo change color
                     SliverToBoxAdapter(
-                      child: textIconRow(
-                        '${post.category}, ${post.type}',
+                      child: richTextIconRow(
+                        '${post.category} ',
+                        ', ${post.type}',
                         CupertinoColors.white,
                         Consumer<RealestateAuthProvider>(
                             builder: (context, provider, _) => loading
@@ -558,6 +558,33 @@ class _PostPageState extends State<PostPage> {
           text: map.value ?? '-',
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
     ]));
+  }
+
+  Row richTextIconRow(String text1, String text2, Color textColor, Widget icon,
+      String iconText, Function() onIconTap) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        RichText(
+            text: TextSpan(
+                style: TextStyle(fontSize: 22, color: textColor),
+                children: [
+              TextSpan(text: text1),
+              TextSpan(
+                  text: text2,
+                  style: const TextStyle(color: CupertinoColors.systemYellow))
+            ])),
+        GestureDetector(
+          onTap: onIconTap,
+          child: RichText(
+              maxLines: 1,
+              text: TextSpan(children: [
+                WidgetSpan(child: icon, alignment: PlaceholderAlignment.middle),
+                TextSpan(text: iconText),
+              ])),
+        ),
+      ],
+    );
   }
 
   Row textIconRow(String text, Color textColor, Widget icon, String iconText,

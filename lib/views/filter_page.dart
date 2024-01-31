@@ -43,18 +43,25 @@ class _FilterPageState extends State<FilterPage> {
                           SizedBox(
                               width: double.infinity,
                               child: CupertinoSegmentedControl<String>(
+                                padding: EdgeInsets.zero,
                                 groupValue:
                                     searchProvider.tempQueries['type'] ?? 'All',
                                 children: {
                                   for (var element in types)
-                                    element: Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 5, bottom: 5),
-                                      child: Text(
-                                        element,
-                                        style: const TextStyle(
-                                            color: CupertinoColors.white),
-                                      ),
+                                    element: Text(
+                                      overflow: TextOverflow.ellipsis,
+                                      element,
+                                      style: TextStyle(
+                                          color: searchProvider.tempQueries[
+                                                          'type'] ==
+                                                      element ||
+                                                  (element == 'All' &&
+                                                      searchProvider
+                                                                  .tempQueries[
+                                                              'type'] ==
+                                                          null)
+                                              ? CupertinoColors.black
+                                              : CupertinoColors.white),
                                     )
                                 },
                                 onValueChanged: (String? value) {

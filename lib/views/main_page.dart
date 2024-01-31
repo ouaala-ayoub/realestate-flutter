@@ -36,6 +36,7 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return CupertinoTabScaffold(
       tabBar: CupertinoTabBar(
+        inactiveColor: CupertinoColors.white,
         // currentIndex: currentIndex,
         items: const [
           BottomNavigationBarItem(

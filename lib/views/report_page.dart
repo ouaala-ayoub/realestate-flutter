@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:realestate/main.dart';
@@ -107,6 +108,11 @@ class ReportPage extends StatelessWidget {
                                       height: 10,
                                     ),
                                     CupertinoTextField(
+                                      decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(5)),
+                                          border: Border.all(
+                                              color: CupertinoColors.white)),
                                       minLines: 5,
                                       maxLines: 5,
                                       maxLength: 250,
@@ -242,19 +248,30 @@ class _SingleReasonState extends State<SingleReason> {
     return Row(
       children: [
         GestureDetector(
-          onTap: () {},
-          child: CupertinoCheckbox(
-            activeColor: CupertinoColors.systemYellow,
-            value: isChecked,
-            onChanged: (value) {
-              setState(() {
-                isChecked = !isChecked;
-              });
-              widget.onChanged(value);
-            },
+          onTap: () {
+            setState(() {
+              isChecked = !isChecked;
+            });
+            widget.onChanged(isChecked);
+          },
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CupertinoCheckbox(
+                checkColor: CupertinoColors.black,
+                activeColor: CupertinoColors.systemYellow,
+                value: isChecked,
+                onChanged: (value) {
+                  setState(() {
+                    isChecked = !isChecked;
+                  });
+                  widget.onChanged(value);
+                },
+              ),
+              Text(widget.text)
+            ],
           ),
         ),
-        Text(widget.text)
       ],
     );
   }

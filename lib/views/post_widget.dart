@@ -49,26 +49,6 @@ class PostCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Visibility(
-              visible: false, // Set visibility condition
-              child: Card(
-                margin: const EdgeInsets.all(10.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5.0),
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.all(5.0),
-                  child: Text(
-                    'Out of Order',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: CupertinoColors.systemRed,
-                      fontSize: 18.0,
-                    ),
-                  ),
-                ),
-              ),
-            ),
             Hero(
               transitionOnUserGestures: true,
               tag: '${post.id}',

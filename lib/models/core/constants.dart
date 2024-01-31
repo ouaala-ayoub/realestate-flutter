@@ -5,7 +5,6 @@ const baseLink = 'assets/icons/';
 const landMarks = {
   "Near Shopping Mall": '${baseLink}near shopping mall.svg',
   "Brand New": '${baseLink}new.svg',
-  "New": '${baseLink}new.svg',
   "Near Transportation": '${baseLink}near transportation.svg',
   "Gym": '${baseLink}gym.svg',
   "Swimming Pool": '${baseLink}pool.svg',

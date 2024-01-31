@@ -84,27 +84,23 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(
                   width: double.infinity,
                   child: CupertinoSegmentedControl<String>(
+                    padding: EdgeInsets.zero,
                     pressedColor:
                         CupertinoTheme.of(context).primaryContrastingColor,
                     groupValue: searchProvider.searchParams.type ?? 'All',
                     children: {
                       for (var element in types)
-                        element: GestureDetector(
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 5, bottom: 5),
-                            child: Text(
-                              element,
-                              style: TextStyle(
-                                  color: searchProvider.searchParams.type ==
-                                              element ||
-                                          (element == 'All' &&
-                                              searchProvider
-                                                      .searchParams.type ==
-                                                  null)
-                                      ? CupertinoColors.black
-                                      : CupertinoColors.white),
-                            ),
-                          ),
+                        element: Text(
+                          overflow: TextOverflow.ellipsis,
+                          element,
+                          style: TextStyle(
+                              color: searchProvider.searchParams.type ==
+                                          element ||
+                                      (element == 'All' &&
+                                          searchProvider.searchParams.type ==
+                                              null)
+                                  ? CupertinoColors.black
+                                  : CupertinoColors.white),
                         )
                     },
                     onValueChanged: (String? value) {

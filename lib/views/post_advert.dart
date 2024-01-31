@@ -114,6 +114,10 @@ class _PostAdvertState extends State<PostAdvert> {
               ),
               actions: [
                 CupertinoDialogAction(
+                    onPressed: () => context.pop(),
+                    isDestructiveAction: true,
+                    child: const Text('Back')),
+                CupertinoDialogAction(
                     onPressed: () {
                       context.pop();
                       provider.submitPost(
@@ -129,7 +133,7 @@ class _PostAdvertState extends State<PostAdvert> {
                                 context: context,
                                 builder: (context) => CupertinoAlertDialog(
                                       title: const Text(
-                                          'Unexcpected error please try again'),
+                                          'Unexpected error ! please try again'),
                                       actions: [
                                         CupertinoDialogAction(
                                           isDestructiveAction: true,
@@ -145,10 +149,6 @@ class _PostAdvertState extends State<PostAdvert> {
                       'Confirm',
                       style: TextStyle(color: CupertinoColors.white),
                     )),
-                CupertinoDialogAction(
-                    onPressed: () => context.pop(),
-                    isDestructiveAction: true,
-                    child: const Text('Cancel')),
               ],
             ));
   }
@@ -163,18 +163,18 @@ class _PostAdvertState extends State<PostAdvert> {
                 CupertinoDialogAction(
                     onPressed: () {
                       context.pop();
+                      context.pop();
+                    },
+                    isDestructiveAction: true,
+                    child: const Text('Yes')),
+                CupertinoDialogAction(
+                    onPressed: () {
+                      context.pop();
                     },
                     child: const Text(
                       'No',
                       style: TextStyle(color: CupertinoColors.white),
                     )),
-                CupertinoDialogAction(
-                    onPressed: () {
-                      context.pop();
-                      context.pop();
-                    },
-                    isDestructiveAction: true,
-                    child: const Text('Yes'))
               ],
             ));
   }
