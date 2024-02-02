@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +9,8 @@ import 'package:provider/provider.dart';
 import 'package:realestate/models/core/country.dart';
 import 'package:realestate/providers/filterabli_choices_list.dart';
 import 'package:realestate/views/country_info.dart';
+import 'package:realestate/views/loader_provider.dart';
+import 'package:svg_flutter/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uuid/uuid.dart';
 import '../../main.dart';
@@ -24,7 +27,7 @@ String formatPrice(int? price) {
   // Using the Flutter's NumberFormat class for currency formatting
   final formatter = NumberFormat.currency(
     symbol: '\$', // You can customize the currency symbol
-    decimalDigits: 2, // Specify the number of decimal places
+    decimalDigits: 0, // Specify the number of decimal places
   );
 
   // Format the price and return as a string
@@ -166,6 +169,168 @@ void showActionSheet(BuildContext context, SearchProvider searchProvider,
                   ),
                 )),
   );
+}
+
+Column headerRequired(String text) {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          text,
+          style: const TextStyle(color: CupertinoColors.white, fontSize: 17),
+        ),
+      ),
+      // const Align(
+      //   alignment: Alignment.centerLeft,
+      //   child: Text(
+      //     'required*',
+      //     style: TextStyle(color: CupertinoColors.systemRed),
+      //   ),
+      // )
+    ],
+  );
+}
+
+CupertinoFormSection contactInfoSection(
+    LoaderProvider provider, BuildContext context,
+    {required Function() onChangedPhone}) {
+  return CupertinoFormSection(
+      header: headerRequired('Contact Infos'),
+      children: [
+        CupertinoFormRow(
+            error: provider.data['phoneNumber'].text.isEmpty ||
+                    provider.data['phoneCode'] == null
+                ? const Text('Please enter your contact number')
+                : null,
+            prefix: CupertinoButton(
+              child: Row(
+                children: [
+                  SvgPicture.network(
+                    provider.data['phoneFlag'] ?? '',
+                    height: 24,
+                    width: 24,
+                    placeholderBuilder: (context) => const Icon(
+                      CupertinoIcons.eye_slash_fill,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Text(provider.data['phoneCode'] ?? 'phone code'),
+                ],
+              ),
+              onPressed: () {
+                final searchProvider = context.read<SearchProvider>();
+                showActionSheet(context, searchProvider, (country) {
+                  provider.setFields(['phoneCode', 'phoneFlag'],
+                      [country.dialCode, country.image]);
+
+                  // context.pop();
+                }, showCode: true);
+              },
+            ),
+            child: CupertinoTextFormFieldRow(
+              maxLength: 15,
+              onChanged: (value) => onChangedPhone(),
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              keyboardType: TextInputType.number,
+              placeholder: 'Phone Number',
+              controller: provider.data['phoneNumber'],
+            )),
+        CupertinoFormRow(
+            error: !provider.data['contactPhone'] &&
+                    !provider.data['contactWhatsapp']
+                ? const Text('Choose atleast one communication method')
+                : null,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Row(
+                  children: [
+                    const Icon(
+                      CupertinoIcons.phone,
+                      size: 24,
+                    ),
+                    CupertinoSwitch(
+                      value: provider.data['contactPhone'] ?? false,
+                      onChanged: (checked) {
+                        provider.setFields(['contactPhone'], [checked]);
+                      },
+                    )
+                  ],
+                ),
+                Row(children: [
+                  SvgPicture.asset(
+                    'assets/icons/whatsapp.svg',
+                    height: 24,
+                    width: 24,
+                    colorFilter: const ColorFilter.mode(
+                      CupertinoColors.activeGreen,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  CupertinoSwitch(
+                      value: provider.data['contactWhatsapp'] ?? false,
+                      onChanged: (checked) {
+                        provider.setFields(['contactWhatsapp'], [checked]);
+                      })
+                ]),
+              ],
+            ))
+      ]);
+}
+
+Align smallTitle(String text) {
+  return Align(
+    alignment: Alignment.centerLeft,
+    child: Text(
+      text,
+      style: const TextStyle(color: CupertinoColors.systemYellow),
+    ),
+  );
+}
+
+Row flagAndCode(String? flag, String? code) {
+  return Row(
+    children: [
+      SvgPicture.network(
+        flag ?? '',
+        height: 24,
+        width: 24,
+        placeholderBuilder: (context) => const Icon(
+          CupertinoIcons.eye_slash_fill,
+          size: 24,
+        ),
+      ),
+      const SizedBox(
+        width: 5,
+      ),
+      Text(code ?? 'phone code'),
+    ],
+  );
+}
+
+Future<dynamic> showInformativeDialog(BuildContext buildContext, String text) {
+  return showCupertinoDialog(
+      context: buildContext,
+      builder: (context) => CupertinoAlertDialog(
+            content: Text(
+              text,
+              style: const TextStyle(fontSize: 16),
+            ),
+            actions: [
+              CupertinoDialogAction(
+                child: const Text('Ok'),
+                onPressed: () => context.pop(),
+              ),
+            ],
+          ));
 }
 
 showPicker(BuildContext context, PostAdvertProvider? provider,

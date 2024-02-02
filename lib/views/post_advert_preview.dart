@@ -1,10 +1,10 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/cupertino.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-
 import '../providers/auth_provider.dart';
 import 'error_widget.dart';
 import 'login_page.dart';
+import 'route_button.dart';
 
 class PostAdvertButtonPage extends StatelessWidget {
   const PostAdvertButtonPage({super.key});
@@ -24,8 +24,8 @@ class PostAdvertButtonPage extends StatelessWidget {
               : authProvider.auth!.fold((error) {
                   if (error == 'Unauthorized') {
                     return const LoginPage(
-                      goType: GoType.push,
-                      sourceRoute: '/post_advert',
+                      goType: GoType.doNothing,
+                      sourceRoute: '/',
                     );
                   } else {
                     return ErrorScreen(
@@ -34,19 +34,31 @@ class PostAdvertButtonPage extends StatelessWidget {
                   }
                 },
                   (auth) => Center(
-                        child: CupertinoButton.filled(
-                            child: const Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    CupertinoIcons.add,
-                                    size: 48,
-                                  ),
-                                  Text('Post Advert')
-                                ]),
-                            onPressed: () =>
-                                context.push('/post_advert/${auth.id}')),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            RouteButton(
+                                icon: const Icon(
+                                    CupertinoIcons.add_circled_solid),
+                                text: 'Post Advert (Rent, Forsale)',
+                                route: '/post_advert/${auth.id}'),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            const Center(
+                              child: Text(
+                                'Or',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            RouteButton(
+                                text: 'Looking for a Realestate?',
+                                route: '/looking_for_advert/${auth.id}')
+                          ],
+                        ),
                       )),
         ),
       ),

@@ -84,7 +84,7 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(
                   width: double.infinity,
                   child: CupertinoSegmentedControl<String>(
-                    padding: EdgeInsets.zero,
+                    padding: EdgeInsets.only(left: 10, right: 10),
                     pressedColor:
                         CupertinoTheme.of(context).primaryContrastingColor,
                     groupValue: searchProvider.searchParams.type ?? 'All',

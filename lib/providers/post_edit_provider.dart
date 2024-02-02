@@ -126,6 +126,7 @@ class PostEditProvider extends ChangeNotifier {
       {required Function() onSuccess,
       required Function(dynamic) onFail}) async {
     //the problem is that the numeric values are inside the map that's stored inside a map
+    //solved
 
     final body = postBuilder.map((key, value) => value is TextEditingController
         ? MapEntry(key, value.text)

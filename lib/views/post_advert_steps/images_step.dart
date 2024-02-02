@@ -91,7 +91,7 @@ class PostAdvertImagesStep extends StatelessWidget {
                             ));
                   },
                   child: SelectedImage(xfile: provider.data['media'][index]))),
-          provider.data['media'].isEmpty
+          !provider.canContinue[0]
               ? const Text(
                   'Please Enter images !',
                   style: TextStyle(color: CupertinoColors.systemRed),

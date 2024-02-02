@@ -3,12 +3,10 @@ import 'package:dio/dio.dart';
 import 'package:realestate/main.dart';
 import 'package:realestate/models/helpers/static_data_helper.dart';
 import 'package:realestate/models/services/posts_api.dart';
-
 import '../core/post/post.dart';
 import '../core/search_params.dart';
 
 class PostsHelper {
-  var urlsList = [];
   final _api = PostsApi();
   final _staticDataHelper = StaticDataHelper();
   Future<Either<dynamic, List<Post>>> fetshPosts(
@@ -128,23 +126,56 @@ class PostsHelper {
     }
   }
 
+  Future<Either<dynamic, dynamic>> lookingForAdvert(
+      Map<String, dynamic> data, String ownerId) async {
+    final body = {
+      'description': data['description'].text,
+      'category': data['category'],
+      'location': {
+        'country': data['country'],
+        'city': data['city'].text,
+        'area': data['area'].text
+      },
+      'type': 'Looking For',
+      'contact': {
+        'code': data['phoneCode'],
+        'phone': data['phoneNumber'].text,
+        'type': data['contactPhone'] && data['contactWhatsapp']
+            ? 'Both'
+            : data['contactPhone']
+                ? 'Call'
+                : 'Whatsapp',
+      },
+    };
+    final res = await _addPost(body);
+    return res;
+  }
+
   Future<Either<dynamic, dynamic>> postAdvert(
       Map<String, dynamic> data, String ownerId) async {
-    late final Either<dynamic, List<dynamic>> urls;
-    if (urlsList.isEmpty) {
-      urls = await _staticDataHelper.uploadImages(data['media']);
-    } else {
-      urls = Right(urlsList);
-    }
-    // final urls = Right([
-    //   'https://firebasestorage.googleapis.com/v0/b/realestate-d9b12.appspot.com/o/posts%2F1705571425323.291bf6c872c3.png?alt=media&token=9170f6d9-7a3f-44a0-98f0-e788367b1e3e'
-    // ]);
+    final Either<dynamic, Map<String, String>> urls =
+        await _staticDataHelper.uploadImages(data['media']);
+
+    //todo fix this shitty condition
+    //todo if user is not redirected to post advert preview after fail
+
+    // if (urlsMap.isEmpty) {
+    //   urls = await _staticDataHelper.uploadImages(data['media']);
+    // } else {
+    //   //need to compare the last urls => names to the media
+    //   final List<XFile> medias = data['media'];
+    //   final temp = <String, String>{};
+    //   for (var media in medias) {
+    //     if (urlsMap[media.name] != null) {}
+    //   }
+    //   urls = Right(urlsMap);
+    // }
+
     logger.i('images uploaded $urls');
     return urls.fold((l) {
       return const Left('Error Uploading Images');
     }, (urls) async {
       logger.i(urls);
-      urlsList = urls;
       final body = {
         'description': data['description'].text,
         'media': urls,
@@ -177,6 +208,10 @@ class PostsHelper {
       }..removeWhere((key, value) => value == null || value.isEmpty);
       logger.d('body $body');
       final res = await _addPost(body);
+
+      //todo add media delete if post request fail
+      // res.fold((l) => null, (r) => null);
+
       return res;
     });
   }

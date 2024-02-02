@@ -9,7 +9,7 @@ class PostsApi {
       {SearchParams? searchParams}) async {
     try {
       final params = searchParams?.toMap();
-      const endpoint = 'https://realestatefy.vercel.app/api/posts';
+      const endpoint = 'https://properties-realestate.vercel.app/api/posts';
       final res = await Dio().get(endpoint, queryParameters: params);
       return Right(res.data);
     } catch (e) {
@@ -18,53 +18,60 @@ class PostsApi {
   }
 
   Future<List<dynamic>> fetshUserLiked(String userId) async {
-    final endpoint = 'https://realestatefy.vercel.app/api/users/$userId/likes';
+    final endpoint =
+        'https://properties-realestate.vercel.app/api/users/$userId/likes';
     final res = await Dio().get(endpoint);
     return res.data;
   }
 
   Future<List<dynamic>> fetshUserPosts(String userId) async {
-    final endpoint = 'https://realestatefy.vercel.app/api/users/$userId/posts';
+    final endpoint =
+        'https://properties-realestate.vercel.app/api/users/$userId/posts';
     final res = await Dio().get(endpoint);
     return res.data;
   }
 
   Future<String> unlike(String postId) async {
-    final endpoint = 'https://realestatefy.vercel.app/api/posts/$postId/unlike';
+    final endpoint =
+        'https://properties-realestate.vercel.app/api/posts/$postId/unlike';
     final options = await retrieveCookieOptions();
     final res = await Dio(options).patch(endpoint);
     return res.data['message'];
   }
 
   Future<String> like(String postId) async {
-    final endpoint = 'https://realestatefy.vercel.app/api/posts/$postId/like';
+    final endpoint =
+        'https://properties-realestate.vercel.app/api/posts/$postId/like';
     final options = await retrieveCookieOptions();
     final res = await Dio(options).patch(endpoint);
     return res.data['message'];
   }
 
   Future<dynamic> deletePost(postId) async {
-    final endpoint = 'https://realestatefy.vercel.app/api/posts/$postId';
+    final endpoint =
+        'https://properties-realestate.vercel.app/api/posts/$postId';
     final options = await retrieveCookieOptions();
     final res = await Dio(options).delete(endpoint);
     return res.data;
   }
 
   Future<dynamic> fetshPost(String postId) async {
-    final endpoint = 'https://realestatefy.vercel.app/api/posts/$postId';
+    final endpoint =
+        'https://properties-realestate.vercel.app/api/posts/$postId';
     final res = await Dio().get(endpoint);
     return res.data;
   }
 
   Future<dynamic> addPost(Map<String, dynamic> post) async {
-    const endpoint = 'https://realestatefy.vercel.app/api/posts';
+    const endpoint = 'https://properties-realestate.vercel.app/api/posts';
     final options = await retrieveCookieOptions();
     final res = await Dio(options).post(endpoint, data: jsonEncode(post));
     return res.data;
   }
 
   Future<dynamic> updatePost(Map<String, dynamic> post) async {
-    final endpoint = 'https://realestatefy.vercel.app/api/posts/${post['_id']}';
+    final endpoint =
+        'https://properties-realestate.vercel.app/api/posts/${post['_id']}';
     final options = await retrieveCookieOptions();
     final res = await Dio(options).put(endpoint, data: jsonEncode(post));
     return res.data;
@@ -72,7 +79,7 @@ class PostsApi {
 
   Future<int> getPostsCount(Map<String, dynamic> params) async {
     params['status'] = 'Approved';
-    const endpoint = 'https://realestatefy.vercel.app/api/posts/count';
+    const endpoint = 'https://properties-realestate.vercel.app/api/posts/count';
     final res = await Dio().get(endpoint, queryParameters: params);
     return res.data;
   }

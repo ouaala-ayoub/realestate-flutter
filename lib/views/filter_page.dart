@@ -81,6 +81,22 @@ class _FilterPageState extends State<FilterPage> {
                                   }),
                               context,
                               searchProvider.tempQueries['country']),
+                          CupertinoTextField(
+                            placeholder: 'Enter a city',
+                            controller: searchProvider.tempQueries['city'],
+                            prefix: Padding(
+                              padding: const EdgeInsets.only(left: 5),
+                              child: smallTitle('City :'),
+                            ),
+                          ),
+                          // CupertinoTextField(
+                          //   onChanged: (value) =>
+                          //       searchProvider.setTempField('city', value),
+                          //   prefix: Padding(
+                          //     padding: const EdgeInsets.only(left: 5),
+                          //     child: smallTitle('Area :'),
+                          //   ),
+                          // ),
                           chooseButton(
                               'category',
                               () => showCategoryActionSheet(

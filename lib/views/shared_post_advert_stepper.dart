@@ -1,48 +1,52 @@
 import 'package:cupertino_stepper/cupertino_stepper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-import 'package:realestate/providers/post_advert_provider.dart';
+import 'package:realestate/views/loader_provider.dart';
 import '../main.dart';
 
-//todo delete
-
-class PostAdvert extends StatefulWidget {
+class PostAdvertTest extends StatefulWidget {
   final String ownerId;
-  const PostAdvert({required this.ownerId, super.key});
+  final String pageTitle;
+  final String successRoute;
+  final LoaderProvider loaderProvider;
+  const PostAdvertTest(
+      {super.key,
+      required this.pageTitle,
+      required this.loaderProvider,
+      required this.ownerId,
+      required this.successRoute});
 
   @override
-  State<PostAdvert> createState() => _PostAdvertState();
+  State<PostAdvertTest> createState() => _PostAdvertState();
 }
 
-class _PostAdvertState extends State<PostAdvert> {
+class _PostAdvertState extends State<PostAdvertTest> {
   int currentStep = 0;
 
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: !context.watch<PostAdvertProvider>().loading,
+      canPop: !widget.loaderProvider.loading,
       child: CupertinoPageScaffold(
-          navigationBar: const CupertinoNavigationBar(
-            middle: Text('Post Advert'),
-          ),
-          child: SafeArea(
-            child: Consumer<PostAdvertProvider>(
-                builder: (context, provider, _) => provider.loading
-                    ? const Center(
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text('Adding post'),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              CupertinoActivityIndicator()
-                            ]),
-                      )
-                    : _buildStepper(StepperType.horizontal, provider)),
-          )),
+        navigationBar: CupertinoNavigationBar(
+          middle: Text(widget.pageTitle),
+        ),
+        child: SafeArea(
+            child: widget.loaderProvider.loading
+                ? const Center(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('Adding post'),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          CupertinoActivityIndicator()
+                        ]),
+                  )
+                : _buildStepper(StepperType.horizontal, widget.loaderProvider)),
+      ),
     );
   }
 
@@ -60,8 +64,7 @@ class _PostAdvertState extends State<PostAdvert> {
     );
   }
 
-  CupertinoStepper _buildStepper(
-      StepperType type, PostAdvertProvider provider) {
+  CupertinoStepper _buildStepper(StepperType type, LoaderProvider provider) {
     //todo dont forget to fix can continue
     //todo change logic to handle disable button if required info not entred
     return CupertinoStepper(
@@ -104,7 +107,7 @@ class _PostAdvertState extends State<PostAdvert> {
     );
   }
 
-  showSubmitDialog(PostAdvertProvider provider, BuildContext buildContext) {
+  showSubmitDialog(LoaderProvider provider, BuildContext buildContext) {
     showCupertinoDialog(
         context: context,
         builder: (context) => CupertinoAlertDialog(
@@ -125,13 +128,13 @@ class _PostAdvertState extends State<PostAdvert> {
                           ownerId: widget.ownerId,
                           onSuccess: (res) {
                             // logger.i(res['message']);
-                            buildContext.pushReplacement('/post_created');
+                            buildContext.pushReplacement(widget.successRoute);
                           },
                           onFail: (e) {
                             logger.e(e);
-                            context.pop();
+                            buildContext.pop();
                             showCupertinoDialog(
-                                context: context,
+                                context: buildContext,
                                 builder: (context) => CupertinoAlertDialog(
                                       title: const Text(
                                           'Unexpected error ! please try again'),

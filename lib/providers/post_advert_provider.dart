@@ -1,23 +1,40 @@
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:realestate/models/core/types.dart';
 import 'package:realestate/models/helpers/posts_helper.dart';
+import 'package:realestate/providers/search_provider.dart';
+import 'package:realestate/views/loader_provider.dart';
 import 'package:realestate/views/post_advert_steps/details_step.dart';
 import '../main.dart';
-import '../views/post_advert_steps/post_advert_step1.dart';
-import '../views/post_advert_steps/post_advert_step2.dart';
-import '../views/post_advert_steps/post_advert_step3.dart';
+import '../views/post_advert_steps/images_step.dart';
+import '../views/post_advert_steps/location_step.dart';
+import '../views/post_advert_steps/property_info_step.dart';
 
-class PostAdvertProvider extends ChangeNotifier {
-  bool loading = false;
+class PostAdvertProvider extends LoaderProvider {
   static final _helper = PostsHelper();
-  List<bool> canContinue = [false, false, false];
-  final steps = [
+
+  final List<bool> _canContinue = [false, false, false];
+  @override
+  List<bool> get canContinue => _canContinue;
+
+  bool _loading = false;
+  @override
+  bool get loading => _loading;
+
+  final _steps = [
     const PostAdvertImagesStep(),
-    const LocationDataStep(),
+    Consumer<PostAdvertProvider>(builder: ((context, provider, child) {
+      final searchProvider = context.read<SearchProvider>();
+      return LocationStepBody(
+          searchProvider: searchProvider, loaderProvider: provider);
+    })),
     const PropretyInfoStep(),
   ];
-  final Map<String, dynamic> data = {
+  @override
+  List<Widget> get steps => _steps;
+
+  final Map<String, dynamic> _data = {
     'media': [],
     'country': null,
     'city': TextEditingController(),
@@ -41,14 +58,18 @@ class PostAdvertProvider extends ChangeNotifier {
     'foot2': TextEditingController(),
     'features': []
   };
+  @override
+  Map<String, dynamic> get data => _data;
+
   // final Map<String, String?> error = {'country': null};
 
+  @override
   void submitPost(
       {required String ownerId,
       Function(dynamic)? onStart,
       required Function(dynamic) onSuccess,
       required Function(dynamic) onFail}) async {
-    loading = true;
+    _loading = true;
     notifyListeners();
     final res = await _helper.postAdvert(data, ownerId);
     res.fold((e) {
@@ -56,32 +77,32 @@ class PostAdvertProvider extends ChangeNotifier {
     }, (res) {
       onSuccess(res);
     });
-    loading = false;
+    _loading = false;
     notifyListeners();
     //upload images and send post request
   }
 
   updateNextStatus3() {
-    final stepsDone = canContinue[0] && canContinue[1] && canContinue[2];
-    final lastValue = canContinue[3];
-    final newValue = data['condition'] != null &&
-        data['numRooms'].text.isNotEmpty &&
-        data['numBathrooms'].text.isNotEmpty &&
-        data['floorNumber'].text.isNotEmpty &&
-        data['floors'].text.isNotEmpty &&
+    final stepsDone = _canContinue[0] && _canContinue[1] && _canContinue[2];
+    final lastValue = _canContinue[3];
+    final newValue = _data['condition'] != null &&
+        _data['numRooms'].text.isNotEmpty &&
+        _data['numBathrooms'].text.isNotEmpty &&
+        _data['floorNumber'].text.isNotEmpty &&
+        _data['floors'].text.isNotEmpty &&
         stepsDone;
 
     logger.d(newValue);
     if (newValue != lastValue) {
-      canContinue[3] = newValue;
+      _canContinue[3] = newValue;
     }
     notifyListeners();
   }
 
   handleFeature(String feature) {
-    data['features'].contains(feature) == true
-        ? data['features'].remove(feature)
-        : data['features'].add(feature);
+    _data['features'].contains(feature) == true
+        ? _data['features'].remove(feature)
+        : _data['features'].add(feature);
 
     notifyListeners();
   }
@@ -90,9 +111,9 @@ class PostAdvertProvider extends ChangeNotifier {
     if (value.isNotEmpty) {
       final double squareMeters = double.parse(value);
       final double squareFeet = squareMeters * 10.7639;
-      data['foot2'].text = squareFeet.toStringAsFixed(2);
+      _data['foot2'].text = squareFeet.toStringAsFixed(2);
     } else {
-      data['foot2'].text = '';
+      _data['foot2'].text = '';
     }
     notifyListeners();
   }
@@ -101,23 +122,23 @@ class PostAdvertProvider extends ChangeNotifier {
     if (value.isNotEmpty) {
       final double squareFeet = double.parse(value);
       final double squareMeters = squareFeet / 10.7639;
-      data['m2'].text = squareMeters.toStringAsFixed(2);
+      _data['m2'].text = squareMeters.toStringAsFixed(2);
     } else {
-      data['m2'].text = '';
+      _data['m2'].text = '';
     }
     notifyListeners();
   }
 
+  @override
   setFields(List<String> keys, List<dynamic> values) {
     for (var key in keys.indexed) {
-      data[key.$2] = values[key.$1];
+      _data[key.$2] = values[key.$1];
     }
-    notifyListeners();
     updateNextStatus2();
   }
 
   handleDetails(category) {
-    data['category'] = category;
+    _data['category'] = category;
     if (detailedCategories.contains(category)) {
       addDetails();
     } else {
@@ -130,7 +151,7 @@ class PostAdvertProvider extends ChangeNotifier {
     logger.i('length ${steps.length}');
     if (steps.length == 3) {
       steps.add(const DetailsStep());
-      canContinue.add(false);
+      _canContinue.add(false);
     }
   }
 
@@ -138,56 +159,59 @@ class PostAdvertProvider extends ChangeNotifier {
     logger.i('length ${steps.length}');
     if (steps.length == 4) {
       steps.removeLast();
-      canContinue.removeLast();
-      data['condition'] = null;
-      data['numRooms'] = TextEditingController();
-      data['numBathrooms'] = TextEditingController();
-      data['floors'] = TextEditingController();
-      data['m2'] = TextEditingController();
-      data['foot2'] = TextEditingController();
-      data['features'] = [];
+      _canContinue.removeLast();
+      _data['condition'] = null;
+      _data['numRooms'] = TextEditingController();
+      _data['numBathrooms'] = TextEditingController();
+      _data['floors'] = TextEditingController();
+      _data['m2'] = TextEditingController();
+      _data['foot2'] = TextEditingController();
+      _data['features'] = [];
     }
   }
 
-  setCountry(String country) {
-    data['country'] = country;
+  @override
+  setCountry(String name) {
+    _data['country'] = name;
     updateNextStatus();
   }
 
   updateNextStatus2() {
-    final stepsDone = canContinue[0] && canContinue[1];
-    final lastValue = canContinue[2];
-    final validData = data['type'] != null && data['type'] == 'Rent'
-        ? data['period'] != null
+    final stepsDone = _canContinue[0] && _canContinue[1];
+    final lastValue = _canContinue[2];
+    final validData = _data['type'] != null && _data['type'] == 'Rent'
+        ? _data['period'] != null
         : true &&
-            data['category'] != null &&
-            data['price'].text.isNotEmpty &&
-            data['phoneCode'] != null &&
-            data['phoneFlag'] != null &&
-            data['phoneNumber'].text.isNotEmpty != null &&
-            (data['contactPhone'] || data['contactWhatsapp']);
+            _data['category'] != null &&
+            _data['price'].text.isNotEmpty &&
+            _data['phoneCode'] != null &&
+            _data['phoneNumber'].text.isNotEmpty != null &&
+            (_data['contactPhone'] || _data['contactWhatsapp']);
     final isLastStep = steps.length == 3;
     final complementaty = isLastStep ? stepsDone : true;
     final newValue = validData && complementaty;
 
     if (newValue != lastValue) {
-      canContinue[2] = newValue;
+      _canContinue[2] = newValue;
     }
+    updateNextStatus();
     notifyListeners();
   }
 
+  @override
   updateNextStatus() {
-    canContinue[1] = data['country'] != null &&
+    _canContinue[1] = _data['country'] != null &&
         isFieldNotEmpty('city') &&
         isFieldNotEmpty('description');
     notifyListeners();
   }
 
-  isFieldNotEmpty(String field) => data[field].text.isNotEmpty;
+  isFieldNotEmpty(String field) => _data[field].text.isNotEmpty;
 
   deleteImageAtIndex(int index) {
-    data['media'].removeAt(index);
-    canContinue[0] = data['media'].isNotEmpty;
+    _data['media'].removeAt(index);
+    _canContinue[0] = _data['media'].isNotEmpty;
+    logger.i(_canContinue);
     notifyListeners();
   }
 
@@ -198,11 +222,17 @@ class PostAdvertProvider extends ChangeNotifier {
   }
 
   addFile(XFile file) {
-    data['media'].add(file);
+    _data['media'].add(file);
   }
 
   notify() {
-    canContinue[0] = data['media'].isNotEmpty;
+    _canContinue[0] = _data['media'].isNotEmpty;
     notifyListeners();
+  }
+
+  @override
+  updateNextStatus1() {
+    //todo delete
+    throw UnimplementedError();
   }
 }

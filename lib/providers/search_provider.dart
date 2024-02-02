@@ -13,6 +13,7 @@ class SearchProvider extends ChangeNotifier {
   Map<String, dynamic> tempQueries = {
     'type': null,
     'country': null,
+    'city': null,
     'category': null,
     'priceFilter': null,
     'condition': null,
@@ -69,6 +70,7 @@ class SearchProvider extends ChangeNotifier {
     tempQueries = {
       'type': searchParams.type,
       'country': searchParams.country,
+      'city': TextEditingController(text: searchParams.city),
       'category': searchParams.category,
       'priceFilter': searchParams.priceFilter,
       'condition': searchParams.condition,
@@ -79,10 +81,13 @@ class SearchProvider extends ChangeNotifier {
   void setFilters() {
     searchParams.type = tempQueries['type'];
     searchParams.country = tempQueries['country'];
+    searchParams.city = tempQueries['city'].text;
     searchParams.category = tempQueries['category'];
     searchParams.priceFilter = tempQueries['priceFilter'];
     searchParams.condition = tempQueries['condition'];
     searchParams.features = tempQueries['features'];
+
+    notifyListeners();
   }
 
   void refreshParams() {

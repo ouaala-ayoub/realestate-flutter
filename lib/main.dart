@@ -10,18 +10,21 @@ import 'package:realestate/models/core/post/post.dart';
 import 'package:realestate/providers/auth_provider.dart';
 import 'package:realestate/providers/home_page_provider.dart';
 import 'package:realestate/providers/liked_provider.dart';
+import 'package:realestate/providers/looking_for_edit_provider.dart';
+import 'package:realestate/providers/looking_for_provider.dart';
 import 'package:realestate/providers/post_edit_provider.dart';
 import 'package:realestate/providers/post_page_provider.dart';
 import 'package:realestate/providers/posts_list_provider.dart';
 import 'package:realestate/providers/report_provider.dart';
 import 'package:realestate/providers/search_provider.dart';
-import 'package:realestate/views/post_advert.dart';
+import 'package:realestate/views/looking_for_post_edit.dart';
 import 'package:realestate/views/post_created.dart';
 import 'package:realestate/views/post_edit.dart';
 import 'package:realestate/views/post_page.dart';
 import 'package:realestate/views/profile_page.dart';
 import 'package:realestate/views/report_page.dart';
 import 'package:realestate/views/settings_page.dart';
+import 'package:realestate/views/shared_post_advert_stepper.dart';
 import 'firebase_options.dart';
 import 'providers/post_advert_provider.dart';
 import 'views/main_page.dart';
@@ -52,7 +55,7 @@ class MyApp extends StatelessWidget {
   final config = GoRouter(routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => MainPage(),
+      builder: (context, state) => const MainPage(),
     ),
     GoRoute(path: '/search', builder: (context, state) => const FilterPage()),
     GoRoute(
@@ -98,17 +101,48 @@ class MyApp extends StatelessWidget {
           );
         }),
     GoRoute(
+        path: '/looking_for_post_edit/:id',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return ChangeNotifierProvider(
+            create: (context) => LookingForPostEditProvider(),
+            child: LookingForPostEdit(
+              postId: id,
+            ),
+          );
+        }),
+    GoRoute(
         path: '/post_advert/:ownerId',
         builder: (context, state) {
           final userId = state.pathParameters['ownerId']!;
           return ChangeNotifierProvider(
             create: (context) => PostAdvertProvider(),
-            child: PostAdvert(
-              ownerId: userId,
-            ),
+            child: Consumer<PostAdvertProvider>(
+                builder: (context, provider, _) => PostAdvertTest(
+                      ownerId: userId,
+                      successRoute: '/post_created',
+                      pageTitle: 'Post Advert',
+                      loaderProvider: provider,
+                    )),
           );
         }),
-    GoRoute(path: '/post_created', builder: (context, state) => PostCreated())
+    GoRoute(
+        path: '/looking_for_advert/:ownerId',
+        builder: (context, state) {
+          final userId = state.pathParameters['ownerId']!;
+          return ChangeNotifierProvider(
+            create: (context) => LookingForProvider(),
+            child: Consumer<LookingForProvider>(
+                builder: (context, provider, _) => PostAdvertTest(
+                      ownerId: userId,
+                      successRoute: '/post_created',
+                      pageTitle: 'Looking for',
+                      loaderProvider: provider,
+                    )),
+          );
+        }),
+    GoRoute(
+        path: '/post_created', builder: (context, state) => const PostCreated())
   ]);
 //  builder: (context, state) => SettingsPage()
   // This widget is the root of your application.

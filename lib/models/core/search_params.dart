@@ -24,9 +24,9 @@ class SearchParams {
       this.features});
 
   Map<String, dynamic> toMap() => {
-        'search': search,
-        'country': country,
-        'city': city,
+        'q': search,
+        'co': country,
+        'ci': city,
         'category': category,
         'type': type,
         'n': n,

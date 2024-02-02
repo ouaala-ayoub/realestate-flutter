@@ -28,7 +28,7 @@ class _MainPageState extends State<MainPage> {
   int currentIndex = 0;
   // final visited = <int>[];
   final List<Widget> _pagesList = [
-    HomePage(),
+    const HomePage(),
     const LikedPage(),
     const PostAdvertButtonPage()
   ];

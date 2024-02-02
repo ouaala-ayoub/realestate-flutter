@@ -105,8 +105,13 @@ class _ProfilePageState extends State<ProfilePage> {
                                                       type: UseType.edit,
                                                       post: post,
                                                       countryInfo: country,
-                                                      onClicked: () => context.push(
-                                                          '/post_edit/${post.id}'));
+                                                      onClicked: () => post
+                                                                  .type !=
+                                                              'Looking For'
+                                                          ? context.push(
+                                                              '/post_edit/${post.id}')
+                                                          : context.push(
+                                                              '/looking_for_post_edit/${post.id}'));
                                                 })
                                           ],
                                           // child: postsList(posts, provider),

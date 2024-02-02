@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -35,32 +34,32 @@ class _PostEditPageState extends State<PostEditPage> {
       navigationBar: const CupertinoNavigationBar(
         middle: Text('Post Edit'),
       ),
-      child: Consumer<PostEditProvider>(
-          builder: (context, provider, _) => provider.loading
-              ? const Center(
-                  child: CupertinoActivityIndicator(),
-                )
-              : provider.post.fold(
-                  (l) => ErrorScreen(
-                      refreshFunction: provider.fetshPost(widget.postId),
-                      message: 'Error getting post data'), (post) {
-                  if (provider.firstTime) {
-                    provider.postBuilder = post.toMap()
-                      ..removeWhere((key, value) => value == null);
-                    final country = context
-                        .read<SearchProvider>()
-                        .countries
-                        .fold(
-                            (l) => null,
-                            (countries) => countries.firstWhere((element) =>
-                                provider.postBuilder['contact']['code'] ==
-                                element.dialCode));
-                    provider.initialiseBuilder(countryFlag: country?.image);
-                    logger.i(provider.postBuilder);
-                    provider.firstTime = false;
-                  }
-                  return SafeArea(
-                    child: Padding(
+      child: SafeArea(
+        child: Consumer<PostEditProvider>(
+            builder: (context, provider, _) => provider.loading
+                ? const Center(
+                    child: CupertinoActivityIndicator(),
+                  )
+                : provider.post.fold(
+                    (l) => ErrorScreen(
+                        refreshFunction: provider.fetshPost(widget.postId),
+                        message: 'Error getting post data'), (post) {
+                    if (provider.firstTime) {
+                      provider.postBuilder = post.toMap()
+                        ..removeWhere((key, value) => value == null);
+                      final country = context
+                          .read<SearchProvider>()
+                          .countries
+                          .fold(
+                              (l) => null,
+                              (countries) => countries.firstWhere((element) =>
+                                  provider.postBuilder['contact']['code'] ==
+                                  element.dialCode));
+                      provider.initialiseBuilder(countryFlag: country?.image);
+                      logger.i(provider.postBuilder);
+                      provider.firstTime = false;
+                    }
+                    return Padding(
                       padding: const EdgeInsets.only(left: 10, right: 10),
                       child: Column(
                         children: [
@@ -165,7 +164,10 @@ class _PostEditPageState extends State<PostEditPage> {
                                   child: Row(
                                     children: [
                                       CupertinoButton(
-                                        child: flagAndCode(provider),
+                                        child: flagAndCode(
+                                            provider.postBuilder['phoneFlag'],
+                                            provider.postBuilder['contact']
+                                                ['code']),
                                         onPressed: () {
                                           final searchProvider =
                                               context.read<SearchProvider>();
@@ -610,57 +612,9 @@ class _PostEditPageState extends State<PostEditPage> {
                           )
                         ],
                       ),
-                    ),
-                  );
-                })),
-    );
-  }
-
-  Future<dynamic> showInformativeDialog(
-      BuildContext buildContext, String text) {
-    return showCupertinoDialog(
-        context: buildContext,
-        builder: (context) => CupertinoAlertDialog(
-              content: Text(
-                text,
-                style: const TextStyle(fontSize: 16),
-              ),
-              actions: [
-                CupertinoDialogAction(
-                  child: const Text('Ok'),
-                  onPressed: () => context.pop(),
-                ),
-              ],
-            ));
-  }
-
-  Align smallTitle(String text) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Text(
-        text,
-        style: const TextStyle(color: CupertinoColors.systemYellow),
+                    );
+                  })),
       ),
-    );
-  }
-
-  Row flagAndCode(PostEditProvider provider) {
-    return Row(
-      children: [
-        SvgPicture.network(
-          provider.postBuilder['phoneFlag'] ?? '',
-          height: 24,
-          width: 24,
-          placeholderBuilder: (context) => const Icon(
-            CupertinoIcons.eye_slash_fill,
-            size: 24,
-          ),
-        ),
-        const SizedBox(
-          width: 5,
-        ),
-        Text(provider.postBuilder['contact']['code'] ?? 'phone code'),
-      ],
     );
   }
 

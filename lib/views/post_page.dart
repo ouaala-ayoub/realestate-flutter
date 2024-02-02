@@ -111,7 +111,9 @@ class _PostPageState extends State<PostPage> {
                       child: Hero(
                         tag: '${post.id}',
                         child: Image.network(
-                          post.media?[0], // Replace with your image path
+                          post.media!.isNotEmpty
+                              ? post.media![0]
+                              : '', // Replace with your image path
                           height: 300, // Adjust the height as needed
                           fit: BoxFit.fitWidth,
                           errorBuilder: (context, obj, trace) => const SizedBox(
@@ -131,8 +133,8 @@ class _PostPageState extends State<PostPage> {
                     //todo change color
                     SliverToBoxAdapter(
                       child: richTextIconRow(
-                        '${post.category} ',
-                        ', ${post.type}',
+                        '${post.type}',
+                        '${post.category}',
                         CupertinoColors.white,
                         Consumer<RealestateAuthProvider>(
                             builder: (context, provider, _) => loading
@@ -569,10 +571,12 @@ class _PostPageState extends State<PostPage> {
             text: TextSpan(
                 style: TextStyle(fontSize: 22, color: textColor),
                 children: [
-              TextSpan(text: text1),
               TextSpan(
-                  text: text2,
-                  style: const TextStyle(color: CupertinoColors.systemYellow))
+                  text: '$text1\n',
+                  style: const TextStyle(color: CupertinoColors.systemYellow)),
+              TextSpan(
+                text: text2,
+              )
             ])),
         GestureDetector(
           onTap: onIconTap,
