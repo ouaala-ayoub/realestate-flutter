@@ -84,7 +84,7 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(
                   width: double.infinity,
                   child: CupertinoSegmentedControl<String>(
-                    padding: EdgeInsets.only(left: 10, right: 10),
+                    padding: const EdgeInsets.only(left: 10, right: 10),
                     pressedColor:
                         CupertinoTheme.of(context).primaryContrastingColor,
                     groupValue: searchProvider.searchParams.type ?? 'All',
@@ -117,14 +117,20 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 chooseButton(
-                    'country',
-                    () => showActionSheet(context, searchProvider, (country) {
-                          searchProvider.setSelectedCountry(country);
-                          searchProvider.searchParams.page = 1;
-                          homeProvider.pagingController.refresh();
-                        }),
-                    context,
-                    searchProvider.searchParams.country),
+                  'country',
+                  () => showActionSheet(context, searchProvider, (country) {
+                    searchProvider.setSelectedCountry(country);
+                    searchProvider.searchParams.page = 1;
+                    homeProvider.pagingController.refresh();
+                  }),
+                  context,
+                  searchProvider.searchParams.country,
+                  onClearClicked: () {
+                    searchProvider.setSelectedCountry(null);
+                    searchProvider.searchParams.page = 1;
+                    homeProvider.pagingController.refresh();
+                  },
+                ),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10, right: 10),
@@ -177,7 +183,7 @@ class _HomePageState extends State<HomePage> {
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Image.network(
-                                              'https://realestatefy.vercel.app/${news.image}',
+                                              'https://properties-realestate.vercel.app/${news.image}',
                                               // loadingBuilder: (context, child,
                                               //         loadingProgress) =>
                                               //     CupertinoActivityIndicator(),
@@ -212,7 +218,12 @@ class _HomePageState extends State<HomePage> {
                                     homeProvider.pagingController.refresh();
                                   }),
                               context,
-                              searchProvider.searchParams.category),
+                              searchProvider.searchParams.category,
+                              onClearClicked: () {
+                            searchProvider.setSelectedCategory(null);
+                            searchProvider.searchParams.page = 1;
+                            homeProvider.pagingController.refresh();
+                          }),
                         ),
                         SliverToBoxAdapter(
                           child: CupertinoSearchTextField(

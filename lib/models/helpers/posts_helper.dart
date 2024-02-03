@@ -153,7 +153,7 @@ class PostsHelper {
 
   Future<Either<dynamic, dynamic>> postAdvert(
       Map<String, dynamic> data, String ownerId) async {
-    final Either<dynamic, Map<String, String>> urls =
+    final Either<dynamic, List<String>> urls =
         await _staticDataHelper.uploadImages(data['media']);
 
     //todo fix this shitty condition

@@ -1,6 +1,7 @@
 const maxFilesLimit = 10;
 const periods = ['Per Day', 'Per Month', 'Per Year'];
 const conditions = ['Luxury', 'Excellent', 'Good', 'Normal'];
+const baseWebsiteUrl = 'https://properties-realestate.vercel.app/api';
 const baseLink = 'assets/icons/';
 const landMarks = {
   "Near Shopping Mall": '${baseLink}near shopping mall.svg',

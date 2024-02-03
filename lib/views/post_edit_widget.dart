@@ -37,7 +37,8 @@ class PostEditWidget extends StatelessWidget {
                   Text(
                     '${post.status}',
                     style: TextStyle(
-                        color: post.status == 'Rejected'
+                        color: post.status == 'Rejected' ||
+                                post.status == 'Blocked'
                             ? CupertinoColors.systemRed
                             : post.status == 'Pending'
                                 ? CupertinoColors.activeOrange

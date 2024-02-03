@@ -125,15 +125,13 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<dynamic> showOptionsPopUp(BuildContext context,
       PostsListProvider provider, String postId, Post post, String userId) {
+    final newStatus = post.status == 'Approved' ? 'Out Of Order' : 'Approved';
     return showCupertinoModalPopup(
         context: context,
         builder: (context) => CupertinoActionSheet(
               actions: [
                 CupertinoActionSheetAction(
                     onPressed: () {
-                      final newStatus = post.status == 'Approved'
-                          ? 'Out Of Order'
-                          : 'Approved';
                       post.status != 'Approved' && post.status != 'Out Of Order'
                           ? indicativeDialog(
                               context,
@@ -151,8 +149,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                   context, 'Something went wrong', 'Cancel');
                             }));
                     },
-                    child: const Text('Set Out Of Order',
-                        style: TextStyle(color: CupertinoColors.white))),
+                    child: Text('Set $newStatus',
+                        style: const TextStyle(color: CupertinoColors.white))),
                 CupertinoActionSheetAction(
                     onPressed: () => showDeleteDialog((context) {
                           provider.deletePost(postId, onSuccess: (message) {

@@ -81,7 +81,8 @@ class SearchProvider extends ChangeNotifier {
   void setFilters() {
     searchParams.type = tempQueries['type'];
     searchParams.country = tempQueries['country'];
-    searchParams.city = tempQueries['city'].text;
+    searchParams.city =
+        tempQueries['city'].text.isNotEmpty ? tempQueries['city'].text : null;
     searchParams.category = tempQueries['category'];
     searchParams.priceFilter = tempQueries['priceFilter'];
     searchParams.condition = tempQueries['condition'];

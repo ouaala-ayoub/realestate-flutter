@@ -31,7 +31,7 @@ String formatPrice(int? price) {
   );
 
   // Format the price and return as a string
-  return formatter.format(price);
+  return price != null ? formatter.format(price) : '-';
 }
 
 void showCategoryActionSheet<T>(BuildContext context,
@@ -358,36 +358,64 @@ showEditPicker(BuildContext context, values, {Function(String)? onClicked}) {
   showPicker(context, null, values, '', onClicked: onClicked);
 }
 
-CupertinoButton chooseButton(
-    String target, Function onPressed, BuildContext context, String? toShow) {
-  return CupertinoButton(
-    onPressed: () => onPressed(),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          'Choose a $target',
-          style: const TextStyle(color: CupertinoColors.white),
-        ),
-        const SizedBox(
-          width: 10,
-        ),
-        Expanded(
-          child: Center(
-            child: Text(
-              toShow ?? 'Select',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+Row chooseButton(
+  String target,
+  Function onPressed,
+  BuildContext context,
+  String? toShow, {
+  Function()? onClearClicked,
+}) {
+  return Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Flexible(
+        child: CupertinoButton(
+          onPressed: () => onPressed(),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Choose a $target',
+                style: const TextStyle(color: CupertinoColors.white),
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Expanded(
+                child: Center(
+                  child: Text(
+                    toShow ?? 'Select',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+              const Icon(
+                CupertinoIcons.forward,
+                size: 16.0, // Adjust the size as needed
+              ),
+            ],
           ),
         ),
-        const Icon(
-          CupertinoIcons.forward,
-          size: 16.0, // Adjust the size as needed
-        ),
-      ],
-    ),
+      ),
+      onClearClicked != null
+          ? Row(
+              children: [
+                const SizedBox(
+                  width: 10,
+                ),
+                GestureDetector(
+                  onTap: onClearClicked,
+                  child: const Icon(
+                    CupertinoIcons.clear_circled_solid,
+                    size: 16.0, // Adjust the size as needed
+                  ),
+                )
+              ],
+            )
+          : SizedBox(),
+    ],
   );
 }
 

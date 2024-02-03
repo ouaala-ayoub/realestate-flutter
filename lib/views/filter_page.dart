@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:realestate/main.dart';
 import 'package:realestate/models/core/constants.dart';
 import 'package:realestate/models/core/price_filter.dart';
 import 'package:realestate/models/helpers/function_helpers.dart';
@@ -80,7 +81,9 @@ class _FilterPageState extends State<FilterPage> {
                                         'country', country.name);
                                   }),
                               context,
-                              searchProvider.tempQueries['country']),
+                              searchProvider.tempQueries['country'],
+                              onClearClicked: () =>
+                                  searchProvider.setTempField('country', null)),
                           CupertinoTextField(
                             placeholder: 'Enter a city',
                             controller: searchProvider.tempQueries['city'],
@@ -98,23 +101,29 @@ class _FilterPageState extends State<FilterPage> {
                           //   ),
                           // ),
                           chooseButton(
-                              'category',
-                              () => showCategoryActionSheet(
-                                      context, searchProvider, (category) {
-                                    final needDetail =
-                                        detailedCategories.contains(category);
-                                    searchProvider.setTempField(
-                                        'category', category);
-
-                                    searchProvider.setTempField(
-                                        'features', needDetail ? [] : null);
-                                    if (!needDetail) {
-                                      searchProvider.setTempField(
-                                          'condition', null);
-                                    }
-                                  }),
+                            'category',
+                            () => showCategoryActionSheet(
                               context,
-                              searchProvider.tempQueries['category']),
+                              searchProvider,
+                              (category) {
+                                final needDetail =
+                                    detailedCategories.contains(category);
+                                searchProvider.setTempField(
+                                    'category', category);
+
+                                searchProvider.setTempField(
+                                    'features', needDetail ? [] : null);
+                                if (!needDetail) {
+                                  searchProvider.setTempField(
+                                      'condition', null);
+                                }
+                              },
+                            ),
+                            context,
+                            searchProvider.tempQueries['category'],
+                            onClearClicked: () =>
+                                searchProvider.setTempField('category', null),
+                          ),
                           const TitleWidget(
                             text: 'Price Filter',
                           ),
@@ -177,6 +186,7 @@ class _FilterPageState extends State<FilterPage> {
                     onPressed: () {
                       //todo add filter logic
                       searchProvider.setFilters();
+                      logger.i(searchProvider.searchParams.toMap());
                       context.pop(true);
                     }),
               )

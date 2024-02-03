@@ -34,10 +34,9 @@ class StaticDataHelper {
     return res;
   }
 
-  Future<Either<dynamic, Map<String, String>>> uploadImages(
-      dynamic images) async {
+  Future<Either<dynamic, List<String>>> uploadImages(dynamic images) async {
     // images.map((image) => logger.i(createUniqueImageName(extension: )));
-    final mapper = <String, String>{};
+    // final mapper = <String, String>{};
     final urls = <String>[];
     final firebaseRef = FirebaseStorage.instance.ref();
     for (var image in images) {
@@ -51,13 +50,13 @@ class StaticDataHelper {
             .child('posts/$fileName')
             .putFile(io.File(image.path), metadata);
         final url = await uploadTask.ref.getDownloadURL();
-        mapper[url] = image.name;
+        // mapper[url] = image.name;
         urls.add(url);
       } catch (e) {
         logger.e(e);
         return Left(e);
       }
     }
-    return Right(mapper);
+    return Right(urls);
   }
 }
