@@ -409,7 +409,7 @@ Row chooseButton(
                   onTap: onClearClicked,
                   child: const Icon(
                     CupertinoIcons.clear_circled_solid,
-                    size: 16.0, // Adjust the size as needed
+                    size: 24, // Adjust the size as needed
                   ),
                 )
               ],

@@ -21,8 +21,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<bool> loadings = [];
-
   @override
   void initState() {
     final homeProvider = context.read<HomePageProvider>();
@@ -116,20 +114,25 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                 ),
-                chooseButton(
-                  'country',
-                  () => showActionSheet(context, searchProvider, (country) {
-                    searchProvider.setSelectedCountry(country);
-                    searchProvider.searchParams.page = 1;
-                    homeProvider.pagingController.refresh();
-                  }),
-                  context,
-                  searchProvider.searchParams.country,
-                  onClearClicked: () {
-                    searchProvider.setSelectedCountry(null);
-                    searchProvider.searchParams.page = 1;
-                    homeProvider.pagingController.refresh();
-                  },
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  child: chooseButton(
+                    'country',
+                    () => showActionSheet(context, searchProvider, (country) {
+                      searchProvider.setSelectedCountry(country);
+                      searchProvider.searchParams.page = 1;
+                      homeProvider.pagingController.refresh();
+                    }),
+                    context,
+                    searchProvider.searchParams.country,
+                    onClearClicked: () {
+                      if (searchProvider.searchParams.country != null) {
+                        searchProvider.setSelectedCountry(null);
+                        searchProvider.searchParams.page = 1;
+                        homeProvider.pagingController.refresh();
+                      }
+                    },
+                  ),
                 ),
                 Expanded(
                   child: Padding(
@@ -208,22 +211,28 @@ class _HomePageState extends State<HomePage> {
                                       })),
                         ]),
                         SliverToBoxAdapter(
-                          child: chooseButton(
-                              'category',
-                              () => showCategoryActionSheet(
-                                      context, searchProvider, (category) {
-                                    searchProvider
-                                        .setSelectedCategory(category);
-                                    searchProvider.searchParams.page = 1;
-                                    homeProvider.pagingController.refresh();
-                                  }),
-                              context,
-                              searchProvider.searchParams.category,
-                              onClearClicked: () {
-                            searchProvider.setSelectedCategory(null);
-                            searchProvider.searchParams.page = 1;
-                            homeProvider.pagingController.refresh();
-                          }),
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 5, right: 5),
+                            child: chooseButton(
+                                'category',
+                                () => showCategoryActionSheet(
+                                        context, searchProvider, (category) {
+                                      searchProvider
+                                          .setSelectedCategory(category);
+                                      searchProvider.searchParams.page = 1;
+                                      homeProvider.pagingController.refresh();
+                                    }),
+                                context,
+                                searchProvider.searchParams.category,
+                                onClearClicked: () {
+                              if (searchProvider.searchParams.category !=
+                                  null) {
+                                searchProvider.setSelectedCategory(null);
+                                searchProvider.searchParams.page = 1;
+                                homeProvider.pagingController.refresh();
+                              }
+                            }),
+                          ),
                         ),
                         SliverToBoxAdapter(
                           child: CupertinoSearchTextField(
@@ -296,7 +305,6 @@ class _HomePageState extends State<HomePage> {
                                     ],
                                   ),
                               firstPageProgressIndicatorBuilder: (context) {
-                                loadings = [];
                                 return const CupertinoActivityIndicator();
                               },
                               newPageProgressIndicatorBuilder: (context) =>
