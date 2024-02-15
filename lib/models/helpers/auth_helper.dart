@@ -25,10 +25,14 @@ class AuthHelper {
   Future<Either<dynamic, RealestateUser>> login(String token) async {
     try {
       final res = await _api.login(token);
-      return Right(RealestateUser.fromMap(res));
+      logger.i(res);
+      final user = RealestateUser.fromMap(res);
+      logger.i(user);
+      return Right(user);
     } on DioException catch (e) {
-      if (e.response?.data['message'] != null) {
-        return Left(e.response?.data['message']);
+      logger.e(e.response?.data);
+      if (e.response?.data != null) {
+        return Left(e.response?.data);
       }
       return Left(e);
     } catch (e) {
