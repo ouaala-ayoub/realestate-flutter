@@ -75,7 +75,7 @@ class MyApp extends StatelessWidget {
     GoRoute(
         path: '/settings',
         pageBuilder: (context, state) => CustomTransitionPage(
-            child: SettingsPage(),
+            child: const SettingsPage(),
             transitionsBuilder: (context, an1, an2, child) =>
                 FadeTransition(opacity: an1, child: child))),
     GoRoute(

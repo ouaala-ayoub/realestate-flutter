@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:realestate/main.dart';
@@ -56,7 +55,7 @@ class ReportPage extends StatelessWidget {
     return Center(
       child: Consumer<ReportPageProvider>(
         builder: (context, provider, _) => provider.loading
-            ? Center(
+            ? const Center(
                 child: CupertinoActivityIndicator(),
               )
             : Column(

@@ -35,7 +35,6 @@ class LoginPage extends StatelessWidget {
                             : goType == GoType.go
                                 ? context.go(sourceRoute)
                                 : () {};
-                    ;
                   },
                   onFail: (e) => logger.e(e));
               // context.go(sourceRoute);

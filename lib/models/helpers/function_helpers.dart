@@ -16,7 +16,6 @@ import 'package:uuid/uuid.dart';
 import '../../main.dart';
 import '../../providers/post_advert_provider.dart';
 import '../../providers/search_provider.dart';
-import 'dart:typed_data';
 
 double squareMetersToSquareFeet(double? squareMeters) {
   if (squareMeters == null) return 0.0;
@@ -414,7 +413,7 @@ Row chooseButton(
                 )
               ],
             )
-          : SizedBox(),
+          : const SizedBox(),
     ],
   );
 }
