@@ -1,7 +1,9 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 const maxFilesLimit = 10;
 const periods = ['Per Day', 'Per Month', 'Per Year'];
 const conditions = ['Luxury', 'Excellent', 'Good', 'Normal'];
-const baseWebsiteUrl = 'https://properties-realestate.vercel.app/api';
+final baseWebsiteUrl = dotenv.env['BASE_URL'];
 const baseLink = 'assets/icons/';
 const landMarks = {
   "Near Shopping Mall": '${baseLink}near shopping mall.svg',
