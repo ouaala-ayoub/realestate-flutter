@@ -57,7 +57,8 @@ dependencies:
   share_plus: 
   flutter_dotenv: 
   flutter_launcher_icons :
-  
+  cached_network_image: 
+  photo_view: 
     
 flutter_launcher_icons:
   image_path: "assets/icons/launcher_icon.jpg"
