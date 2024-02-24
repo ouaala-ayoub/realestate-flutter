@@ -10,7 +10,7 @@ class PostsApi {
       {SearchParams? searchParams}) async {
     try {
       final params = searchParams?.toMap();
-      const endpoint = '$baseWebsiteUrl/posts';
+      final endpoint = '$baseWebsiteUrl/posts';
       final res = await Dio().get(endpoint, queryParameters: params);
       return Right(res.data);
     } catch (e) {
@@ -58,7 +58,7 @@ class PostsApi {
   }
 
   Future<dynamic> addPost(Map<String, dynamic> post) async {
-    const endpoint = '$baseWebsiteUrl/posts';
+    final endpoint = '$baseWebsiteUrl/posts';
     final options = await retrieveCookieOptions();
     final res = await Dio(options).post(endpoint, data: jsonEncode(post));
     return res.data;
@@ -73,7 +73,7 @@ class PostsApi {
 
   Future<int> getPostsCount(Map<String, dynamic> params) async {
     params['status'] = 'Approved';
-    const endpoint = '$baseWebsiteUrl/posts/count';
+    final endpoint = '$baseWebsiteUrl/posts/count';
     final res = await Dio().get(endpoint, queryParameters: params);
     return res.data;
   }

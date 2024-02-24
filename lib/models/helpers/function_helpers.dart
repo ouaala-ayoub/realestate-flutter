@@ -398,7 +398,7 @@ Row chooseButton(
           ),
         ),
       ),
-      onClearClicked != null
+      (onClearClicked != null && toShow != null)
           ? Row(
               children: [
                 const SizedBox(

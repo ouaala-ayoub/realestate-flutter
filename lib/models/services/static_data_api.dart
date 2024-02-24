@@ -6,7 +6,7 @@ import 'package:realestate/models/core/constants.dart';
 class StaticDataApi {
   Future<Either<dynamic, List<dynamic>>> getCountries() async {
     try {
-      const endpoint = '$baseWebsiteUrl/countries';
+      final endpoint = '$baseWebsiteUrl/countries';
       final res = await Dio().get(endpoint);
       return Right(res.data);
     } catch (e) {
@@ -16,7 +16,7 @@ class StaticDataApi {
 
   Future<Either<dynamic, List<dynamic>>> getCategories() async {
     try {
-      const endpoint = '$baseWebsiteUrl/posts/categories';
+      final endpoint = '$baseWebsiteUrl/posts/categories';
       final res = await Dio().get(endpoint);
       logger.d(res.data);
       return Right(res.data);
@@ -27,7 +27,7 @@ class StaticDataApi {
 
   Future<Either<dynamic, dynamic>> getNews() async {
     try {
-      const endpoint = '$baseWebsiteUrl/news';
+      final endpoint = '$baseWebsiteUrl/news';
       final res = await Dio().get(endpoint);
       return Right(res.data);
     } catch (e) {

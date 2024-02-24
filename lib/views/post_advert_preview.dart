@@ -37,10 +37,21 @@ class PostAdvertButtonPage extends StatelessWidget {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(CupertinoIcons.add_circled),
+                                Text(
+                                  'Post Advert',
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
                             RouteButton(
-                                icon: const Icon(
-                                    CupertinoIcons.add_circled_solid),
-                                text: 'Post Advert (Rent, Forsale)',
+                                text: 'Rent, Forsale',
                                 route: '/post_advert/${auth.id}'),
                             const SizedBox(
                               height: 5,

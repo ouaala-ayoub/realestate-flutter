@@ -6,7 +6,7 @@ import 'package:realestate/models/services/posts_api.dart';
 
 class ReportsApi {
   Future<dynamic> sendReport(Report report) async {
-    const endpoint = '$baseWebsiteUrl/reports';
+    final endpoint = '$baseWebsiteUrl/reports';
     final options = await retrieveCookieOptions();
     final res =
         await Dio(options).post(endpoint, data: jsonEncode(report.toMap()));
