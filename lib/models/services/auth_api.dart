@@ -14,7 +14,7 @@ class AuthApi {
 
   //todo add login
   Future<dynamic> login(String token) async {
-    const endpoint = "$baseWebsiteUrl/login";
+    const endpoint = "$baseWebsiteUrl/sign";
     final options = BaseOptions(headers: {'Authorization': 'Bearer $token'});
     final res = await Dio(options).post(endpoint);
     //todo get session cookie

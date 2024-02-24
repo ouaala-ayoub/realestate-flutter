@@ -1,5 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 import 'package:provider/provider.dart';
 import 'package:realestate/main.dart';
 import 'package:realestate/models/core/constants.dart';
@@ -61,8 +65,9 @@ class _PostPageState extends State<PostPage> {
       child: Consumer<PostPageProvider>(
         builder: (context, provider, _) => provider.post.fold(
             (l) => ErrorScreen(
-                refreshFunction: provider.fetshPost(widget.postId),
-                message: 'Unexpected error'), (post) {
+                  refreshFunction: provider.fetshPost(widget.postId),
+                  message: 'Unexpected error',
+                ), (post) {
           String priceText = formatPrice(post.price);
           if (post.type == 'Rent') {
             priceText += ' / ${post.period}';
@@ -109,21 +114,46 @@ class _PostPageState extends State<PostPage> {
                     ),
                     SliverToBoxAdapter(
                       child: Hero(
-                        tag: '${post.id}',
-                        child: Image.network(
-                          post.media!.isNotEmpty
-                              ? post.media![0]
-                              : '', // Replace with your image path
-                          height: 300, // Adjust the height as needed
-                          fit: BoxFit.fitWidth,
-                          errorBuilder: (context, obj, trace) => const SizedBox(
-                            height: 300,
-                            child: Icon(
-                              CupertinoIcons.eye_slash_fill,
+                        tag: post.id!,
+                        child: SizedBox(
+                          height: 300,
+                          child: PhotoViewGallery.builder(
+                            gaplessPlayback: true,
+                            itemCount: post.media?.length ?? 0,
+                            builder: (context, index) =>
+                                PhotoViewGalleryPageOptions(
+                              imageProvider: CachedNetworkImageProvider(
+                                post.media![index],
+                              ),
+                              initialScale: PhotoViewComputedScale.contained,
+                            ),
+                            loadingBuilder: (context, event) => Center(
+                              child: Container(
+                                width: 20.0,
+                                height: 20.0,
+                                child: CircularProgressIndicator(),
+                              ),
                             ),
                           ),
                         ),
                       ),
+
+                      // child: Hero(
+                      //   tag: '${post.id}',
+                      //   child: Image.network(
+                      //     post.media!.isNotEmpty
+                      //         ? post.media![0]
+                      //         : '', // Replace with your image path
+                      //     height: 300, // Adjust the height as needed
+                      //     fit: BoxFit.fitWidth,
+                      //     errorBuilder: (context, obj, trace) => const SizedBox(
+                      //       height: 300,
+                      //       child: Icon(
+                      //         CupertinoIcons.eye_slash_fill,
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
                     ),
                     const SliverToBoxAdapter(
                       child: SizedBox(

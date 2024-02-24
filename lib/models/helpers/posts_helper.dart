@@ -21,16 +21,19 @@ class PostsHelper {
       List<String>? features}) async {
     try {
       final searchParams = SearchParams(
-          search: search,
-          country: country,
-          city: city,
-          category: category,
-          type: type,
-          n: n,
-          condition: condition,
-          page: page,
-          features: features);
+        search: search,
+        country: country,
+        city: city,
+        category: category,
+        type: type,
+        n: n,
+        condition: condition,
+        page: page,
+        features: features,
+      );
+      logger.d(searchParams.toMap());
       final res = await _api.fetshPosts(searchParams: searchParams);
+      logger.d(res);
       return res.fold(
           (l) => Left(l),
           (r) => Right(

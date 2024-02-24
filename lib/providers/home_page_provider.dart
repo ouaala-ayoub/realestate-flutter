@@ -51,15 +51,16 @@ class HomePageProvider extends ChangeNotifier {
     postsLoading = true;
     try {
       final posts = await _postsHelper.fetshPosts(
-          search: searchParams.search,
-          category: searchParams.category,
-          city: searchParams.city,
-          condition: searchParams.condition,
-          country: searchParams.country,
-          n: searchParams.n,
-          type: searchParams.type,
-          features: searchParams.features,
-          page: searchParams.page);
+        search: searchParams.search,
+        category: searchParams.category,
+        city: searchParams.city,
+        condition: searchParams.condition,
+        country: searchParams.country,
+        n: searchParams.n,
+        type: searchParams.type,
+        features: searchParams.features,
+        page: searchParams.page,
+      );
       posts.fold((l) {
         logger.e('caught a error in the folding process');
         throw Exception('Unxepected error');
