@@ -45,7 +45,7 @@ dependencies:
   infinite_scroll_pagination:
   flutter_secure_storage:
   intl:
-  firebase_core: ^2.25.4
+  firebase_core:
   firebase_auth:
   firebase_ui_auth:
   google_sign_in: 

@@ -118,14 +118,15 @@ class _PostPageState extends State<PostPage> {
                         child: SizedBox(
                           height: 300,
                           child: PhotoViewGallery.builder(
-                            gaplessPlayback: true,
                             itemCount: post.media?.length ?? 0,
                             builder: (context, index) =>
                                 PhotoViewGalleryPageOptions(
                               imageProvider: CachedNetworkImageProvider(
                                 post.media![index],
                               ),
-                              initialScale: PhotoViewComputedScale.contained,
+                              maxScale: PhotoViewComputedScale.covered * 2.0,
+                              minScale: PhotoViewComputedScale.contained,
+                              initialScale: PhotoViewComputedScale.covered,
                             ),
                             loadingBuilder: (context, event) => Center(
                               child: Container(
