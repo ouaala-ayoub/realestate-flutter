@@ -7,7 +7,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
-import 'package:realestate/models/core/post/post.dart';
 import 'package:realestate/providers/auth_provider.dart';
 import 'package:realestate/providers/home_page_provider.dart';
 import 'package:realestate/providers/liked_provider.dart';
@@ -41,14 +40,14 @@ Future<void> main() async {
   FirebaseUIAuth.configureProviders([
     //todo change
     GoogleProvider(
-      clientId:
-          '194326811955-l8hfgikuslg3plm68t6efkctllj71em9.apps.googleusercontent.com',
+      clientId: dotenv.env['CLIENT_ID']!,
     ),
   ]);
   FirebaseAppCheck.instance.activate(
     androidProvider: AndroidProvider.debug,
     appleProvider: AppleProvider.debug,
   );
+
   runApp(MyApp());
 }
 
@@ -61,13 +60,16 @@ class MyApp extends StatelessWidget {
     ),
     GoRoute(path: '/search', builder: (context, state) => const FilterPage()),
     GoRoute(
-        path: '/postPage',
-        builder: (context, state) => ChangeNotifierProvider(
-              create: (context) => PostPageProvider(state.extra as Post),
-              child: PostPage(
-                postId: (state.extra as Post).id!,
-              ),
-            )),
+      path: '/postPage/:id',
+      builder: (context, state) => ChangeNotifierProvider(
+        create: (context) =>
+            PostPageProvider((state.extra as Map<String, dynamic>)['post']),
+        child: PostPage(
+          postId: state.pathParameters['id']!,
+          countryInfo: (state.extra as Map<String, dynamic>)['country_info'],
+        ),
+      ),
+    ),
     GoRoute(
         path: '/report/:id',
         builder: (context, state) => ChangeNotifierProvider(
@@ -114,20 +116,22 @@ class MyApp extends StatelessWidget {
           );
         }),
     GoRoute(
-        path: '/post_advert/:ownerId',
-        builder: (context, state) {
-          final userId = state.pathParameters['ownerId']!;
-          return ChangeNotifierProvider(
-            create: (context) => PostAdvertProvider(),
-            child: Consumer<PostAdvertProvider>(
-                builder: (context, provider, _) => PostAdvertTest(
-                      ownerId: userId,
-                      successRoute: '/post_created',
-                      pageTitle: 'Post Advert',
-                      loaderProvider: provider,
-                    )),
-          );
-        }),
+      path: '/post_advert/:ownerId',
+      builder: (context, state) {
+        final userId = state.pathParameters['ownerId']!;
+        return ChangeNotifierProvider(
+          create: (context) => PostAdvertProvider(),
+          child: Consumer<PostAdvertProvider>(
+            builder: (context, provider, _) => PostAdvertTest(
+              ownerId: userId,
+              successRoute: '/post_created',
+              pageTitle: 'Post Advert ( Rent/ Forsale )',
+              loaderProvider: provider,
+            ),
+          ),
+        );
+      },
+    ),
     GoRoute(
         path: '/looking_for_advert/:ownerId',
         builder: (context, state) {
@@ -135,12 +139,13 @@ class MyApp extends StatelessWidget {
           return ChangeNotifierProvider(
             create: (context) => LookingForProvider(),
             child: Consumer<LookingForProvider>(
-                builder: (context, provider, _) => PostAdvertTest(
-                      ownerId: userId,
-                      successRoute: '/post_created',
-                      pageTitle: 'Looking for',
-                      loaderProvider: provider,
-                    )),
+              builder: (context, provider, _) => PostAdvertTest(
+                ownerId: userId,
+                successRoute: '/post_created',
+                pageTitle: 'Looking for',
+                loaderProvider: provider,
+              ),
+            ),
           );
         }),
     GoRoute(

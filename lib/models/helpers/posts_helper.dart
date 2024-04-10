@@ -18,7 +18,7 @@ class PostsHelper {
       String? n,
       String? condition,
       int page = 1,
-      List<String>? features}) async {
+      List<dynamic>? features}) async {
     try {
       final searchParams = SearchParams(
         search: search,

@@ -16,14 +16,15 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-        navigationBar: const CupertinoNavigationBar(middle: Text('Settings')),
-        child: Consumer<RealestateAuthProvider>(
-          builder: (consumerContext, authProvider, consumerWidget) =>
-              authProvider.loading || authProvider.auth == null
-                  ? const Center(
-                      child: CupertinoActivityIndicator(),
-                    )
-                  : authProvider.auth!.fold((error) {
+      navigationBar: const CupertinoNavigationBar(middle: Text('Settings')),
+      child: Consumer<RealestateAuthProvider>(
+        builder: (consumerContext, authProvider, consumerWidget) =>
+            authProvider.loading || authProvider.auth == null
+                ? const Center(
+                    child: CupertinoActivityIndicator(),
+                  )
+                : authProvider.auth!.fold(
+                    (error) {
                       //todo check error type or text or smtg
                       //todo return screen based on that(login or error)
                       if (error == 'Unauthorized') {
@@ -39,12 +40,14 @@ class SettingsPage extends StatelessWidget {
                         );
                       }
                     },
-                      (user) => SafeArea(
-                            child: SettingsBody(
-                              user: user,
-                            ),
-                          )),
-        ));
+                    (user) => SafeArea(
+                      child: SettingsBody(
+                        user: user,
+                      ),
+                    ),
+                  ),
+      ),
+    );
   }
 }
 
@@ -103,13 +106,16 @@ class SettingsBody extends StatelessWidget {
                   onPressed: () {
                     context.push('/profile/${user.id}');
                   },
-                  child: const Row(mainAxisSize: MainAxisSize.min, children: [
-                    Icon(CupertinoIcons.person_crop_circle_fill_badge_exclam),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text('My posts')
-                  ]),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(CupertinoIcons.person_crop_circle_fill_badge_exclam),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text('My posts')
+                    ],
+                  ),
                 ),
                 CupertinoButton(
                   onPressed: () => context.push('/post_advert/${user.id}'),
@@ -121,24 +127,30 @@ class SettingsBody extends StatelessWidget {
                     Text('Post Advert')
                   ]),
                 ),
-                CupertinoButton(
-                  onPressed: () {
-                    const instagramUrl =
-                        'https://www.instagram.com/properties.realestate_/';
-
-                    launchWebSite(instagramUrl);
-                  },
-                  child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    SvgPicture.asset('assets/icons/instagram.svg',
-                        height: 28,
-                        width: 28,
-                        colorFilter: const ColorFilter.mode(
-                            CupertinoColors.systemYellow, BlendMode.srcIn)),
-                    const SizedBox(
-                      width: 10,
+                SocialMediaLauncher(
+                  icon: SvgPicture.asset(
+                    'assets/icons/instagram.svg',
+                    height: 28,
+                    width: 28,
+                    colorFilter: const ColorFilter.mode(
+                        CupertinoColors.systemYellow, BlendMode.srcIn),
+                  ),
+                  title: 'Instagram',
+                  url: 'https://www.instagram.com/properties.realestate_/',
+                ),
+                SocialMediaLauncher(
+                  icon: SvgPicture.asset(
+                    'assets/icons/tiktok.svg',
+                    height: 28,
+                    width: 28,
+                    colorFilter: const ColorFilter.mode(
+                      CupertinoColors.systemYellow,
+                      BlendMode.srcIn,
                     ),
-                    const Text('Instagram')
-                  ]),
+                  ),
+                  title: 'Tiktok',
+                  url:
+                      'https://www.tiktok.com/@properties.realestate?_t=8lN50rGsPEQ&_r=1',
                 ),
                 CupertinoButton(
                   onPressed: () {
@@ -160,6 +172,37 @@ class SettingsBody extends StatelessWidget {
           ],
         )
       ],
+    );
+  }
+}
+
+class SocialMediaLauncher extends StatelessWidget {
+  final String url;
+  final String title;
+  final Widget icon;
+  const SocialMediaLauncher({
+    required this.url,
+    required this.title,
+    required this.icon,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoButton(
+      onPressed: () {
+        launchWebSite(url);
+      },
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          icon,
+          const SizedBox(
+            width: 10,
+          ),
+          Text(title)
+        ],
+      ),
     );
   }
 }

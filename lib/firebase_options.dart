@@ -14,6 +14,7 @@ import 'package:flutter/foundation.dart'
 ///   options: DefaultFirebaseOptions.currentPlatform,
 /// );
 /// ```
+/// //todo maybe change to dotenv calls
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
@@ -67,8 +68,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '194326811955',
     projectId: 'realestate-d9b12',
     storageBucket: 'realestate-d9b12.appspot.com',
-    androidClientId: '194326811955-caks2beij0egr2mj1gfqj46bv3l8pu46.apps.googleusercontent.com',
-    iosClientId: '194326811955-a2istl019eupsdqiond2lb0e6u8aq5jj.apps.googleusercontent.com',
+    androidClientId:
+        '194326811955-caks2beij0egr2mj1gfqj46bv3l8pu46.apps.googleusercontent.com',
+    iosClientId:
+        '194326811955-a2istl019eupsdqiond2lb0e6u8aq5jj.apps.googleusercontent.com',
     iosBundleId: 'com.example.realestate',
   );
 
@@ -78,8 +81,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '194326811955',
     projectId: 'realestate-d9b12',
     storageBucket: 'realestate-d9b12.appspot.com',
-    androidClientId: '194326811955-caks2beij0egr2mj1gfqj46bv3l8pu46.apps.googleusercontent.com',
-    iosClientId: '194326811955-ebg1mti82t6sf4pv6up9mqa2fumkrtm2.apps.googleusercontent.com',
+    androidClientId:
+        '194326811955-caks2beij0egr2mj1gfqj46bv3l8pu46.apps.googleusercontent.com',
+    iosClientId:
+        '194326811955-ebg1mti82t6sf4pv6up9mqa2fumkrtm2.apps.googleusercontent.com',
     iosBundleId: 'com.example.realestate.RunnerTests',
   );
 }

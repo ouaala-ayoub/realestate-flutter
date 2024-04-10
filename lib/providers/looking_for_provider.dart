@@ -7,6 +7,8 @@ import 'package:realestate/views/looking_for_advert.dart';
 import 'package:realestate/views/post_advert_steps/location_step.dart';
 
 class LookingForProvider extends LoaderProvider {
+  // final formKey = GlobalKey<FormState>();
+
   final List<bool> _canContinue = [false, false];
   @override
   List<bool> get canContinue => _canContinue;

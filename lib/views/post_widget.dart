@@ -137,7 +137,7 @@ class PostCard extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Text(
-                        '${post.location?.country}, ${post.location?.city}, ${post.location?.area}',
+                        '${post.location?.country}, ${post.location?.city}, ${post.location?.area ?? '-'}',
                         style: const TextStyle(
                           color: CupertinoColors.white,
                           fontSize: 14.0,

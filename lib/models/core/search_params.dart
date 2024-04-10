@@ -10,7 +10,7 @@ class SearchParams {
   String? n;
   String? condition;
   int page = 1;
-  List<String>? features = [];
+  List<dynamic>? features = [];
   SearchParams(
       {this.search,
       this.country,

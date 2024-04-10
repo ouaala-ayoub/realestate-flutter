@@ -42,48 +42,57 @@ class _FilterPageState extends State<FilterPage> {
                             height: 20,
                           ),
                           SizedBox(
-                              width: double.infinity,
-                              child: CupertinoSegmentedControl<String>(
-                                padding: EdgeInsets.zero,
-                                groupValue:
-                                    searchProvider.tempQueries['type'] ?? 'All',
-                                children: {
-                                  for (var element in types)
-                                    element: Text(
-                                      overflow: TextOverflow.ellipsis,
-                                      element,
-                                      style: TextStyle(
-                                          color: searchProvider.tempQueries[
+                            width: double.infinity,
+                            child: CupertinoSegmentedControl<String>(
+                              padding: EdgeInsets.zero,
+                              groupValue:
+                                  searchProvider.tempQueries['type'] ?? 'All',
+                              children: {
+                                for (var element in types)
+                                  element: Text(
+                                    overflow: TextOverflow.ellipsis,
+                                    element,
+                                    style: TextStyle(
+                                      color: searchProvider
+                                                      .tempQueries['type'] ==
+                                                  element ||
+                                              (element == 'All' &&
+                                                  searchProvider.tempQueries[
                                                           'type'] ==
-                                                      element ||
-                                                  (element == 'All' &&
-                                                      searchProvider
-                                                                  .tempQueries[
-                                                              'type'] ==
-                                                          null)
-                                              ? CupertinoColors.black
-                                              : CupertinoColors.white),
-                                    )
-                                },
-                                onValueChanged: (String? value) {
-                                  searchProvider.setTempField('type', value);
-                                },
-                              )),
+                                                      null)
+                                          ? CupertinoColors.black
+                                          : CupertinoColors.white,
+                                    ),
+                                  )
+                              },
+                              onValueChanged: (String? value) {
+                                searchProvider.setTempField('type', value);
+                              },
+                            ),
+                          ),
                           const SizedBox(
                             height: 20,
                           ),
                           const TitleWidget(text: 'Location'),
                           chooseButton(
-                              'country',
-                              () => showActionSheet(context, searchProvider,
-                                      (country) {
-                                    searchProvider.setTempField(
-                                        'country', country.name);
-                                  }),
+                            'country',
+                            () => showActionSheet(
                               context,
-                              searchProvider.tempQueries['country'],
-                              onClearClicked: () =>
-                                  searchProvider.setTempField('country', null)),
+                              searchProvider,
+                              (country) {
+                                searchProvider.setTempField(
+                                  'country',
+                                  country.name,
+                                );
+                              },
+                            ),
+                            context,
+                            searchProvider.tempQueries['country'],
+                            onClearClicked: () => searchProvider.setTempField(
+                              'country',
+                              null,
+                            ),
+                          ),
                           CupertinoTextField(
                             placeholder: 'Enter a city',
                             controller: searchProvider.tempQueries['city'],
@@ -121,8 +130,10 @@ class _FilterPageState extends State<FilterPage> {
                             ),
                             context,
                             searchProvider.tempQueries['category'],
-                            onClearClicked: () =>
-                                searchProvider.setTempField('category', null),
+                            onClearClicked: () => searchProvider.setTempField(
+                              'category',
+                              null,
+                            ),
                           ),
                           const TitleWidget(
                             text: 'Price Filter',
@@ -182,13 +193,16 @@ class _FilterPageState extends State<FilterPage> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: CupertinoButton.filled(
-                    child: const Text('Filter'),
-                    onPressed: () {
-                      //todo add filter logic
-                      searchProvider.setFilters();
-                      logger.i(searchProvider.searchParams.toMap());
-                      context.pop(true);
-                    }),
+                  child: const Text('Filter'),
+                  onPressed: () {
+                    //todo add filter logic
+                    searchProvider.setFilters();
+                    logger.i(
+                      searchProvider.searchParams.toMap(),
+                    );
+                    context.pop(true);
+                  },
+                ),
               )
             ],
           ),
@@ -218,23 +232,26 @@ class _FilterPageState extends State<FilterPage> {
             ),
             onPressed: () {
               showCupertinoModalPopup(
-                  context: context,
-                  builder: (context) => CupertinoActionSheet(
-                        cancelButton: cancelButton(context),
-                        actions: conditions
-                            .map((condition) => CupertinoActionSheetAction(
-                                onPressed: () {
-                                  searchProvider.setTempField(
-                                      'condition', condition);
-                                  context.pop();
-                                },
-                                child: Text(
-                                  condition,
-                                  style: const TextStyle(
-                                      color: CupertinoColors.white),
-                                )))
-                            .toList(),
-                      ));
+                context: context,
+                builder: (context) => CupertinoActionSheet(
+                  cancelButton: cancelButton(context),
+                  actions: conditions
+                      .map(
+                        (condition) => CupertinoActionSheetAction(
+                          onPressed: () {
+                            searchProvider.setTempField('condition', condition);
+                            context.pop();
+                          },
+                          child: Text(
+                            condition,
+                            style:
+                                const TextStyle(color: CupertinoColors.white),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+              );
             },
           ),
         ),
@@ -251,30 +268,33 @@ class _FilterPageState extends State<FilterPage> {
           ),
           onPressed: () {
             showCupertinoModalPopup(
-                context: context,
-                builder: (context) => CupertinoActionSheet(
-                      title: const Text(
-                        'Please Check the features you are looking for!',
-                        style: TextStyle(
-                            fontSize: 18, color: CupertinoColors.white),
+              context: context,
+              builder: (context) => CupertinoActionSheet(
+                title: const Text(
+                  'Please Check the features you are looking for!',
+                  style: TextStyle(fontSize: 18, color: CupertinoColors.white),
+                ),
+                cancelButton: CupertinoButton(
+                    child: const Text(
+                      'Done',
+                      style: TextStyle(color: CupertinoColors.white),
+                    ),
+                    onPressed: () => context.pop(())),
+                actions: landMarks.entries
+                    .map(
+                      (entry) => FeatureWidget(
+                        isChecked: searchProvider.tempQueries['features']
+                                ?.contains(entry.key) ==
+                            true,
+                        svgPath: entry.value,
+                        featureText: entry.key,
+                        onChecked: (checked) =>
+                            searchProvider.handleFeature(entry.key),
                       ),
-                      cancelButton: CupertinoButton(
-                          child: const Text(
-                            'Done',
-                            style: TextStyle(color: CupertinoColors.white),
-                          ),
-                          onPressed: () => context.pop(())),
-                      actions: landMarks.entries
-                          .map((entry) => FeatureWidget(
-                              isChecked: searchProvider.tempQueries['features']
-                                      ?.contains(entry.key) ==
-                                  true,
-                              svgPath: entry.value,
-                              featureText: entry.key,
-                              onChecked: (checked) =>
-                                  searchProvider.handleFeature(entry.key)))
-                          .toList(),
-                    ));
+                    )
+                    .toList(),
+              ),
+            );
           },
         )
       ],
@@ -296,9 +316,10 @@ class TitleWidget extends StatelessWidget {
       child: Text(
         text,
         style: const TextStyle(
-            color: CupertinoColors.systemYellow,
-            fontWeight: FontWeight.bold,
-            fontSize: 20),
+          color: CupertinoColors.systemYellow,
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+        ),
       ),
     );
   }

@@ -51,7 +51,7 @@ class PostAdvertButtonPage extends StatelessWidget {
                               height: 20,
                             ),
                             RouteButton(
-                                text: 'Rent, Forsale',
+                                text: 'Rent / Forsale',
                                 route: '/post_advert/${auth.id}'),
                             const SizedBox(
                               height: 5,

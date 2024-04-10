@@ -398,6 +398,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_blurhash:
+    dependency: transitive
+    description:
+      name: flutter_blurhash
+      sha256: "5e67678e479ac639069d7af1e133f4a4702311491188ff3e0227486430db0c06"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.8.2"
   flutter_cache_manager:
     dependency: transitive
     description:
@@ -414,6 +422,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.1.0"
+  flutter_img:
+    dependency: "direct main"
+    description:
+      name: flutter_img
+      sha256: "0d6b80c1c6ac54d3e2d333dab7195a516d385ff55c2a72b9d6c85beb869b3f80"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.6+148"
   flutter_launcher_icons:
     dependency: "direct main"
     description:

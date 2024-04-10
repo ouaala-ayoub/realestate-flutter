@@ -32,20 +32,21 @@ class _PostAdvertState extends State<PostAdvertTest> {
           middle: Text(widget.pageTitle),
         ),
         child: SafeArea(
-            child: widget.loaderProvider.loading
-                ? const Center(
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text('Adding post'),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          CupertinoActivityIndicator()
-                        ]),
-                  )
-                : _buildStepper(StepperType.horizontal, widget.loaderProvider)),
+          child: widget.loaderProvider.loading
+              ? const Center(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('Adding post'),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        CupertinoActivityIndicator()
+                      ]),
+                )
+              : _buildStepper(StepperType.horizontal, widget.loaderProvider),
+        ),
       ),
     );
   }
@@ -91,19 +92,21 @@ class _PostAdvertState extends State<PostAdvertTest> {
                   });
                 }
               : null,
-      steps: provider.steps.map((element) {
-        final i = provider.steps.indexOf(element);
-        return _buildStep(
-          title: const Text(''),
-          content: element,
-          isActive: i == currentStep,
-          state: i == currentStep
-              ? StepState.editing
-              : provider.canContinue[i]
-                  ? StepState.complete
-                  : StepState.indexed,
-        );
-      }).toList(),
+      steps: provider.steps.map(
+        (element) {
+          final i = provider.steps.indexOf(element);
+          return _buildStep(
+            title: const Text(''),
+            content: element,
+            isActive: i == currentStep,
+            state: i == currentStep
+                ? StepState.editing
+                : provider.canContinue[i]
+                    ? StepState.complete
+                    : StepState.indexed,
+          );
+        },
+      ).toList(),
     );
   }
 
@@ -125,28 +128,36 @@ class _PostAdvertState extends State<PostAdvertTest> {
                     onPressed: () {
                       context.pop();
                       provider.submitPost(
-                          ownerId: widget.ownerId,
-                          onSuccess: (res) {
-                            // logger.i(res['message']);
-                            buildContext.pushReplacement(widget.successRoute);
-                          },
-                          onFail: (e) {
-                            logger.e(e);
-                            buildContext.pop();
-                            showCupertinoDialog(
-                                context: buildContext,
-                                builder: (context) => CupertinoAlertDialog(
-                                      title: const Text(
-                                          'Unexpected error ! please try again'),
-                                      actions: [
-                                        CupertinoDialogAction(
-                                          isDestructiveAction: true,
-                                          child: const Text('Cancel'),
-                                          onPressed: () => context.pop(),
-                                        )
-                                      ],
-                                    ));
-                          });
+                        ownerId: widget.ownerId,
+                        onSuccess: (res) {
+                          // logger.i(res['message']);
+                          buildContext.pushReplacement(widget.successRoute);
+                        },
+                        onFail: (e) {
+                          logger.e(e);
+                          // buildContext.pop();
+                          showCupertinoDialog(
+                            context: buildContext,
+                            builder: (context) => CupertinoAlertDialog(
+                              title: const Text(
+                                'Unexpected error ! please try again',
+                              ),
+                              actions: [
+                                // CupertinoDialogAction(
+                                //   isDestructiveAction: true,
+                                //   child: const Text('Cancel'),
+                                //   onPressed: () => context.pop(),
+                                // ),
+                                CupertinoDialogAction(
+                                  isDestructiveAction: true,
+                                  child: const Text('OK'),
+                                  onPressed: () => context.pop(),
+                                )
+                              ],
+                            ),
+                          );
+                        },
+                      );
                     },
                     isDefaultAction: true,
                     child: const Text(

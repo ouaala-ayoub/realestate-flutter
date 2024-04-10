@@ -12,7 +12,6 @@ import 'package:realestate/views/country_info.dart';
 import 'package:realestate/views/loader_provider.dart';
 import 'package:svg_flutter/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:uuid/uuid.dart';
 import '../../main.dart';
 import '../../providers/post_advert_provider.dart';
 import '../../providers/search_provider.dart';
@@ -199,46 +198,49 @@ CupertinoFormSection contactInfoSection(
       header: headerRequired('Contact Infos'),
       children: [
         CupertinoFormRow(
-            error: provider.data['phoneNumber'].text.isEmpty ||
-                    provider.data['phoneCode'] == null
-                ? const Text('Please enter your contact number')
-                : null,
-            prefix: CupertinoButton(
-              child: Row(
-                children: [
-                  SvgPicture.network(
-                    provider.data['phoneFlag'] ?? '',
-                    height: 24,
-                    width: 24,
-                    placeholderBuilder: (context) => const Icon(
-                      CupertinoIcons.eye_slash_fill,
-                      size: 24,
-                    ),
+          error: provider.data['phoneNumber'].text.isEmpty ||
+                  provider.data['phoneCode'] == null
+              ? const Text('Please enter your contact number')
+              : null,
+          prefix: CupertinoButton(
+            child: Row(
+              children: [
+                SvgPicture.network(
+                  provider.data['phoneFlag'] ?? '',
+                  height: 24,
+                  width: 24,
+                  placeholderBuilder: (context) => const Icon(
+                    CupertinoIcons.eye_slash_fill,
+                    size: 24,
                   ),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  Text(provider.data['phoneCode'] ?? 'phone code'),
-                ],
-              ),
-              onPressed: () {
-                final searchProvider = context.read<SearchProvider>();
-                showActionSheet(context, searchProvider, (country) {
-                  provider.setFields(['phoneCode', 'phoneFlag'],
-                      [country.dialCode, country.image]);
-
-                  // context.pop();
-                }, showCode: true);
-              },
+                ),
+                const SizedBox(
+                  width: 5,
+                ),
+                Text(provider.data['phoneCode'] ?? 'phone code'),
+              ],
             ),
-            child: CupertinoTextFormFieldRow(
-              maxLength: 15,
-              onChanged: (value) => onChangedPhone(),
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              keyboardType: TextInputType.number,
-              placeholder: 'Phone Number',
-              controller: provider.data['phoneNumber'],
-            )),
+            onPressed: () {
+              final searchProvider = context.read<SearchProvider>();
+              showActionSheet(context, searchProvider, (country) {
+                provider.setFields(
+                  ['phoneCode', 'phoneFlag'],
+                  [country.dialCode, country.image],
+                );
+
+                // context.pop();
+              }, showCode: true);
+            },
+          ),
+          child: CupertinoTextFormFieldRow(
+            maxLength: 15,
+            onChanged: (value) => onChangedPhone(),
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            keyboardType: TextInputType.number,
+            placeholder: 'Phone Number',
+            controller: provider.data['phoneNumber'],
+          ),
+        ),
         CupertinoFormRow(
             error: !provider.data['contactPhone'] &&
                     !provider.data['contactWhatsapp']
@@ -462,7 +464,8 @@ launchWebSite(String url) async {
   }
 }
 
-String newId() => const Uuid().v4();
+String formateDate(DateTime date, String addition) =>
+    DateFormat('yyyy-MM-dd $addition HH:mm:ss').format(date);
   
 
 // _launchInstagram() async {

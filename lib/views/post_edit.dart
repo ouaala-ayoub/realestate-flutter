@@ -620,19 +620,21 @@ class _PostEditPageState extends State<PostEditPage> {
 
   showTypePicker(PostEditProvider provider) {
     showCupertinoModalPopup(
-        context: context,
-        builder: (context) => CupertinoActionSheet(
-              actions: availableTypes
-                  .map((type) => GestureDetector(
-                        onTap: () {
-                          provider.setPostBuilderField('type', type);
-                          context.pop();
-                        },
-                        child: Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Text(type)),
-                      ))
-                  .toList(),
-            ));
+      context: context,
+      builder: (context) => CupertinoActionSheet(
+        actions: availableTypes
+            .map(
+              (type) => GestureDetector(
+                onTap: () {
+                  provider.setPostBuilderField('type', type);
+                  context.pop();
+                },
+                child: Padding(
+                    padding: const EdgeInsets.all(10), child: Text(type)),
+              ),
+            )
+            .toList(),
+      ),
+    );
   }
 }

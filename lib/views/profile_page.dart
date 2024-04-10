@@ -31,212 +31,234 @@ class _ProfilePageState extends State<ProfilePage> {
     return CupertinoPageScaffold(
       navigationBar: const CupertinoNavigationBar(middle: Text('Profile')),
       child: Consumer<PostsListProvider>(
-          builder: (context, provider, _) => SafeArea(
-                child: provider.loading
-                    ? const Center(
-                        child: CupertinoActivityIndicator(),
-                      )
-                    : provider.filtred.fold(
-                        (e) => ErrorScreen(
-                            refreshFunction: () =>
-                                provider.fetshUserPosts(widget.userId),
-                            message: 'Unexpected error'),
-                        (posts) => Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 10, right: 10),
-                              child: Column(children: [
-                                const SizedBox(height: 12),
-                                CupertinoSearchTextField(
-                                  onChanged: (query) =>
-                                      provider.runFilter(query),
-                                  onSubmitted: (query) =>
-                                      provider.runFilter(query),
+        builder: (context, provider, _) => SafeArea(
+          child: provider.loading
+              ? const Center(
+                  child: CupertinoActivityIndicator(),
+                )
+              : provider.filtred.fold(
+                  (e) => ErrorScreen(
+                      refreshFunction: () =>
+                          provider.fetshUserPosts(widget.userId),
+                      message: 'Unexpected error'),
+                  (posts) => Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 12),
+                        CupertinoSearchTextField(
+                          onChanged: (query) => provider.runFilter(query),
+                          onSubmitted: (query) => provider.runFilter(query),
+                        ),
+                        const SizedBox(height: 12),
+                        posts.isEmpty
+                            ? const Expanded(
+                                child: Center(
+                                  child: Text(
+                                    'No posts Yet',
+                                    style: TextStyle(fontSize: 20),
+                                  ),
                                 ),
-                                const SizedBox(height: 12),
-                                posts.isEmpty
-                                    ? const Expanded(
-                                        child: Center(
-                                        child: Text(
-                                          'No posts Yet',
-                                          style: TextStyle(fontSize: 20),
-                                        ),
-                                      ))
-                                    : Expanded(
-                                        child: CustomScrollView(
-                                          shrinkWrap: true,
-                                          slivers: [
-                                            CupertinoSliverRefreshControl(
-                                              onRefresh: () async {
-                                                await context
-                                                    .read<PostsListProvider>()
-                                                    .fetshUserPosts(
-                                                        widget.userId);
-                                              },
-                                            ),
-                                            SliverList.builder(
-                                                itemCount: posts.length,
-                                                itemBuilder: (context, index) {
-                                                  final post = posts[index];
-                                                  final country = context
-                                                      .read<SearchProvider>()
-                                                      .countries
-                                                      .fold((l) => null, (r) {
-                                                    try {
-                                                      return r.firstWhere(
-                                                          (element) =>
-                                                              element.name ==
-                                                              post.location
-                                                                  ?.country);
-                                                    } catch (e) {
-                                                      logger.e(
-                                                          'element not found');
-                                                      return null;
-                                                    }
-                                                  });
-                                                  return PostEditWidget(
-                                                      onLongPressed: () {
-                                                        showOptionsPopUp(
-                                                            context,
-                                                            provider,
-                                                            post.id!,
-                                                            post,
-                                                            widget.userId);
-                                                      },
-                                                      type: UseType.edit,
-                                                      post: post,
-                                                      countryInfo: country,
-                                                      onClicked: () => post
-                                                                  .type !=
-                                                              'Looking For'
-                                                          ? context.push(
-                                                              '/post_edit/${post.id}')
-                                                          : context.push(
-                                                              '/looking_for_post_edit/${post.id}'));
-                                                })
-                                          ],
-                                          // child: postsList(posts, provider),
-                                        ),
-                                      )
-                              ]),
-                            )),
-              )),
+                              )
+                            : Expanded(
+                                child: CustomScrollView(
+                                  shrinkWrap: true,
+                                  slivers: [
+                                    CupertinoSliverRefreshControl(
+                                      onRefresh: () async {
+                                        await context
+                                            .read<PostsListProvider>()
+                                            .fetshUserPosts(widget.userId);
+                                      },
+                                    ),
+                                    SliverList.builder(
+                                      itemCount: posts.length,
+                                      itemBuilder: (context, index) {
+                                        final post = posts[index];
+                                        final country = context
+                                            .read<SearchProvider>()
+                                            .countries
+                                            .fold(
+                                          (l) => null,
+                                          (r) {
+                                            try {
+                                              return r.firstWhere((element) =>
+                                                  element.name ==
+                                                  post.location?.country);
+                                            } catch (e) {
+                                              logger.e('element not found');
+                                              return null;
+                                            }
+                                          },
+                                        );
+                                        return PostEditWidget(
+                                          onLongPressed: () {
+                                            showOptionsPopUp(context, provider,
+                                                post.id!, post, widget.userId);
+                                          },
+                                          type: UseType.edit,
+                                          post: post,
+                                          countryInfo: country,
+                                          onClicked: () => post.type !=
+                                                  'Looking For'
+                                              ? context
+                                                  .push('/post_edit/${post.id}')
+                                              : context.push(
+                                                  '/looking_for_post_edit/${post.id}'),
+                                        );
+                                      },
+                                    )
+                                  ],
+                                  // child: postsList(posts, provider),
+                                ),
+                              )
+                      ],
+                    ),
+                  ),
+                ),
+        ),
+      ),
     );
   }
 
   Future<dynamic> showOptionsPopUp(BuildContext context,
       PostsListProvider provider, String postId, Post post, String userId) {
-    final newStatus = post.status == 'Approved' ? 'Out Of Order' : 'Approved';
+    final newStatus = post.status == 'Approved' ? 'Sold Out' : 'Approved';
     return showCupertinoModalPopup(
-        context: context,
-        builder: (context) => CupertinoActionSheet(
-              actions: [
-                CupertinoActionSheetAction(
-                    onPressed: () {
-                      post.status != 'Approved' && post.status != 'Out Of Order'
-                          ? indicativeDialog(
-                              context,
-                              'Your post should be approved by admins first !',
-                              'Ok')
-                          : (provider.setOutOfOrder(
-                              {'_id': post.id, 'status': newStatus},
-                              onSuccess: (res) {
-                              logger.i(res);
-                              context.pop();
-                              provider.localySetStatus(newStatus, postId);
-                            }, onFail: (e) {
-                              logger.e(e);
-                              indicativeDialog(
-                                  context, 'Something went wrong', 'Cancel');
-                            }));
-                    },
-                    child: Text('Set $newStatus',
-                        style: const TextStyle(color: CupertinoColors.white))),
-                CupertinoActionSheetAction(
-                    onPressed: () => showDeleteDialog((context) {
-                          provider.deletePost(postId, onSuccess: (message) {
-                            logger.i('message $message');
-                            context.pop();
-                            context.pop();
-                            indicativeDialog(
-                                context, 'Post deleted with success', 'Ok');
-                            provider.fetshUserPosts(userId);
-                          }, onFail: (e) {
-                            // logger.e(e);
-                            context.pop();
-                            context.pop();
-                            indicativeDialog(
-                                context,
-                                'Something went wrong deleting this post',
-                                'Cancel');
-                          });
-                        }),
-                    isDestructiveAction: true,
-                    child: const Text('Delete This Post')),
-                CupertinoActionSheetAction(
-                    onPressed: () {
-                      context.pop();
-                    },
-                    child: const Text(
+      context: context,
+      builder: (context) => CupertinoActionSheet(
+        actions: [
+          CupertinoActionSheetAction(
+            onPressed: () {
+              post.status != 'Approved' && post.status != 'Sold Out'
+                  ? indicativeDialog(context,
+                      'Your post should be approved by admins first !', 'Ok')
+                  : (
+                      provider.setOutOfOrder(
+                        {'_id': post.id, 'status': newStatus},
+                        onSuccess: (res) {
+                          logger.i(res);
+                          context.pop();
+                          provider.localySetStatus(newStatus, postId);
+                        },
+                        onFail: (e) {
+                          logger.e(e);
+                          indicativeDialog(
+                              context, 'Something went wrong', 'Cancel');
+                        },
+                      ),
+                    );
+            },
+            child: Text(
+              'Mark as $newStatus',
+              style: const TextStyle(color: CupertinoColors.white),
+            ),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () => showDeleteDialog(
+              (context) {
+                provider.deletePost(
+                  postId,
+                  onSuccess: (message) {
+                    logger.i('message $message');
+                    context.pop();
+                    context.pop();
+                    indicativeDialog(
+                      context,
+                      'Post deleted with success',
+                      'Ok',
+                    );
+                    provider.fetshUserPosts(userId);
+                  },
+                  onFail: (e) {
+                    // logger.e(e);
+                    context.pop();
+                    context.pop();
+                    indicativeDialog(
+                      context,
+                      'Something went wrong deleting this post',
                       'Cancel',
-                      style: TextStyle(color: CupertinoColors.white),
-                    ))
-              ],
-            ));
+                    );
+                  },
+                );
+              },
+            ),
+            isDestructiveAction: true,
+            child: const Text('Delete This Post'),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              context.pop();
+            },
+            child: const Text(
+              'Cancel',
+              style: TextStyle(
+                color: CupertinoColors.white,
+              ),
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   Future<dynamic> indicativeDialog(
       BuildContext context, String message, String buttonText) {
     return showCupertinoDialog(
-        context: context,
-        builder: (context) => CupertinoAlertDialog(
-              content: Text(
-                message,
-                style:
-                    const TextStyle(color: CupertinoColors.white, fontSize: 16),
-              ),
-              actions: [
-                CupertinoDialogAction(
-                  isDestructiveAction: true,
-                  child: Text(
-                    buttonText,
-                  ),
-                  onPressed: () => context.pop(),
-                )
-              ],
-            ));
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        content: Text(
+          message,
+          style: const TextStyle(
+            color: CupertinoColors.white,
+            fontSize: 16,
+          ),
+        ),
+        actions: [
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            child: Text(
+              buttonText,
+            ),
+            onPressed: () => context.pop(),
+          )
+        ],
+      ),
+    );
   }
 
   showDeleteDialog(Function(BuildContext) deleteFunction) {
     showCupertinoDialog(
-        context: context,
-        builder: (context) => CupertinoAlertDialog(
-              title: const Text(
-                'Deleting !',
-                style: TextStyle(fontSize: 18),
-              ),
-              content: const Text(
-                'Are you sure you want to delete this post ?',
-                style: TextStyle(fontSize: 18),
-              ),
-              actions: [
-                CupertinoDialogAction(
-                  isDestructiveAction: true,
-                  onPressed: () {
-                    //todo write the delete function
-                    deleteFunction(context);
-                  },
-                  child: const Text('Yes'),
-                ),
-                CupertinoDialogAction(
-                  onPressed: () {
-                    context.pop();
-                  },
-                  child: const Text(
-                    'No',
-                    style: TextStyle(color: CupertinoColors.white),
-                  ),
-                )
-              ],
-            ));
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text(
+          'Deleting !',
+          style: TextStyle(fontSize: 18),
+        ),
+        content: const Text(
+          'Are you sure you want to delete this post ?',
+          style: TextStyle(fontSize: 18),
+        ),
+        actions: [
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            onPressed: () {
+              //todo write the delete function
+              deleteFunction(context);
+            },
+            child: const Text('Yes'),
+          ),
+          CupertinoDialogAction(
+            onPressed: () {
+              context.pop();
+            },
+            child: const Text(
+              'No',
+              style: TextStyle(color: CupertinoColors.white),
+            ),
+          )
+        ],
+      ),
+    );
   }
 }

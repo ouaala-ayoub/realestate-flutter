@@ -31,17 +31,17 @@ class PostsApi {
   }
 
   Future<String> unlike(String postId) async {
-    final endpoint = '$baseWebsiteUrl/posts/$postId/unlike';
+    final endpoint = '$baseWebsiteUrl/posts/$postId/like';
     final options = await retrieveCookieOptions();
     final res = await Dio(options).patch(endpoint);
-    return res.data['message'];
+    return res.data;
   }
 
   Future<String> like(String postId) async {
     final endpoint = '$baseWebsiteUrl/posts/$postId/like';
     final options = await retrieveCookieOptions();
     final res = await Dio(options).patch(endpoint);
-    return res.data['message'];
+    return res.data;
   }
 
   Future<dynamic> deletePost(postId) async {

@@ -59,6 +59,9 @@ dependencies:
   flutter_launcher_icons :
   cached_network_image: 
   photo_view: 
+  flutter_img :
+  # todo add this feature
+  # uni_links : 
     
 flutter_launcher_icons:
   image_path: "assets/icons/launcher_icon.jpg"

@@ -13,7 +13,6 @@ const landMarks = {
   "Swimming Pool": '${baseLink}pool.svg',
   "Balcony": '${baseLink}balcony.svg',
   "Furnished": '${baseLink}furnished.svg',
-  "Near Tram": '${baseLink}near_tram.svg',
   "Elevator": '${baseLink}elevator.svg',
   "Parking": '${baseLink}parking.svg',
   "Security": '${baseLink}security.svg',
@@ -23,3 +22,20 @@ const landMarks = {
   "Market": '${baseLink}market.svg',
   "Wifi": '${baseLink}wifi.svg'
 };
+const t = [
+  "Near Shopping Mall",
+  "Brand New",
+  "Near Transportation",
+  "Gym",
+  "Swimming Pool",
+  "Balcony",
+  "Furnished",
+  "Elevator",
+  "Parking",
+  "Security",
+  "Downtown",
+  "Air Condition",
+  "SPA",
+  "Market",
+  "Wifi",
+];

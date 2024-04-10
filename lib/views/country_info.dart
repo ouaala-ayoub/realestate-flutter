@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_img/flutter_img.dart';
 import 'package:realestate/models/core/country.dart';
-import 'package:svg_flutter/svg.dart';
 
 class CountryInfo extends StatelessWidget {
   final Country country;
@@ -16,11 +17,13 @@ class CountryInfo extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(10),
       child: Row(mainAxisSize: MainAxisSize.max, children: [
-        SvgPicture.network(country.image,
-            height: 32,
-            width: 32,
-            placeholderBuilder: (context) =>
-                const CupertinoActivityIndicator()),
+        Img(
+          country.image,
+          height: 32,
+          width: 32,
+          placeholder: const CupertinoActivityIndicator(),
+          errorWidget: const Icon(Icons.error),
+        ),
         const SizedBox(
           width: 5,
         ),

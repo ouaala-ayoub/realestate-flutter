@@ -17,7 +17,7 @@ class SearchProvider extends ChangeNotifier {
     'category': null,
     'priceFilter': null,
     'condition': null,
-    'features': null
+    'features': []
   };
 
   SearchParams searchParams = SearchParams.initial();
