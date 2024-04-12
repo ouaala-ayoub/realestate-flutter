@@ -172,22 +172,24 @@ class _HomePageState extends State<HomePage> {
                             height: 10,
                           ),
                         ),
-                        SliverList.list(children: [
-                          homeProvider.newsLoading
-                              ? const Center(
-                                  child: CupertinoActivityIndicator(),
-                                )
-                              : homeProvider.news.fold(
-                                  (e) => const Center(
-                                        child: Text('Unexpected error'),
-                                      ),
-                                  (news) => ListView.builder(
+                        SliverList.list(
+                          children: [
+                            homeProvider.newsLoading
+                                ? const Center(
+                                    child: CupertinoActivityIndicator(),
+                                  )
+                                : homeProvider.news.fold(
+                                    (e) => const Center(
+                                      child: Text('Unexpected error'),
+                                    ),
+                                    (news) => ListView.builder(
                                       physics:
                                           const NeverScrollableScrollPhysics(),
                                       shrinkWrap: true,
                                       itemCount: 1,
                                       // itemCount: news.length,
                                       itemBuilder: (context, index) {
+                                        //todo change this
                                         return Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
@@ -217,8 +219,11 @@ class _HomePageState extends State<HomePage> {
                                             )
                                           ],
                                         );
-                                      })),
-                        ]),
+                                      },
+                                    ),
+                                  ),
+                          ],
+                        ),
                         SliverToBoxAdapter(
                           child: Padding(
                             padding: const EdgeInsets.only(left: 5, right: 5),
@@ -261,174 +266,167 @@ class _HomePageState extends State<HomePage> {
                         ),
                         PagedSliverList(
                           pagingController: homeProvider.pagingController,
-                          builderDelegate: PagedChildBuilderDelegate<
-                                  PostAndLoading>(
-                              firstPageErrorIndicatorBuilder: (context) =>
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Text('Something went Wrong!'),
-                                      const Text('Please try again later'),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      CupertinoButton.filled(
-                                          child: const Text('Refresh'),
-                                          onPressed: () {
-                                            context
-                                                .read<RealestateAuthProvider>()
-                                                .fetshLateAuth();
-                                            searchProvider.getCountries();
-                                            searchProvider.getCategories();
-                                            homeProvider.getNews();
-                                            homeProvider.getPosts(
-                                                searchProvider.searchParams);
-                                          }),
-                                    ],
-                                  ),
-                              noItemsFoundIndicatorBuilder: (context) => Column(
+                          builderDelegate:
+                              PagedChildBuilderDelegate<PostAndLoading>(
+                            firstPageErrorIndicatorBuilder: (context) => Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text('Something went Wrong!'),
+                                const Text('Please try again later'),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                CupertinoButton.filled(
+                                    child: const Text('Refresh'),
+                                    onPressed: () {
+                                      context
+                                          .read<RealestateAuthProvider>()
+                                          .fetshLateAuth();
+                                      searchProvider.getCountries();
+                                      searchProvider.getCategories();
+                                      homeProvider.getNews();
+                                      homeProvider.getPosts(
+                                          searchProvider.searchParams);
+                                    }),
+                              ],
+                            ),
+                            noItemsFoundIndicatorBuilder: (context) => Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                const Text('No posts found'),
+                                CupertinoButton(
+                                  child: const Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      const SizedBox(
-                                        height: 10,
+                                      Icon(CupertinoIcons.refresh),
+                                      SizedBox(
+                                        width: 5,
                                       ),
-                                      const Text('No posts found'),
-                                      CupertinoButton(
-                                        child: const Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Icon(CupertinoIcons.refresh),
-                                            SizedBox(
-                                              width: 5,
-                                            ),
-                                            Text('Refresh'),
-                                          ],
-                                        ),
-                                        onPressed: () {
-                                          searchProvider.refreshParams();
-                                          homeProvider.pagingController
-                                              .refresh();
-                                        },
-                                      )
+                                      Text('Refresh'),
                                     ],
                                   ),
-                              firstPageProgressIndicatorBuilder: (context) {
-                                return const CupertinoActivityIndicator();
-                              },
-                              newPageProgressIndicatorBuilder: (context) =>
-                                  const CupertinoActivityIndicator(),
-                              itemBuilder: (context, item, index) {
-                                final country = searchProvider.countries
-                                    .fold((l) => null, (r) {
-                                  try {
-                                    return r.firstWhere((element) =>
-                                        element.name ==
-                                        item.post.location?.country);
-                                  } catch (e) {
-                                    logger.e('element not found');
-                                    return null;
-                                  }
-                                });
-                                return Consumer<RealestateAuthProvider>(
-                                  builder: (context, authProvider, _) {
-                                    final liked = authProvider.auth?.fold(
-                                      (l) => null,
-                                      (user) =>
-                                          user.likes?.contains(item.post.id),
-                                    );
-
-                                    return PostCard(
-                                      type: UseType.home,
-                                      loading: item.loading,
-                                      isLiked: liked == true,
-                                      countryInfo: country,
-                                      post: item.post,
-                                      //todo fix this shit logic
-                                      onHeartClicked: (postId) {
-                                        if (item.loading) {
-                                          return;
-                                        }
-                                        if (liked == null) {
-                                          //show a dialog
-                                          logger.i('not logged in');
-                                          showCupertinoDialog(
-                                            context: context,
-                                            builder: (context) =>
-                                                CupertinoAlertDialog(
-                                              title: const Text('Unauthorized'),
-                                              content: const Text(
-                                                'Please login first !',
-                                              ),
-                                              actions: [
-                                                CupertinoDialogAction(
-                                                  onPressed: () =>
-                                                      context.pop(),
-                                                  child: const Text(
-                                                    'Ok',
-                                                    style: TextStyle(
-                                                      color:
-                                                          CupertinoColors.white,
-                                                    ),
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          );
-                                        } else if (liked == false) {
-                                          homeProvider.setLoading(true, index);
-                                          authProvider.like(postId,
-                                              onSuccess: () {
-                                            homeProvider.setLoading(
-                                                false, index);
-                                            authProvider.fetshAuth();
-                                            authProvider.auth?.fold(
-                                              (l) => null,
-                                              (user) => context
-                                                  .read<LikedPageProvider>()
-                                                  .fetshLikedPosts(user.id),
-                                            );
-                                          });
-                                        } else if (liked == true) {
-                                          homeProvider.setLoading(true, index);
-                                          authProvider.unlike(postId,
-                                              onSuccess: () {
-                                            homeProvider.setLoading(
-                                                false, index);
-                                            authProvider.fetshAuth();
-                                            authProvider.auth?.fold(
-                                              (l) => null,
-                                              (user) => context
-                                                  .read<LikedPageProvider>()
-                                                  .fetshLikedPosts(user.id),
-                                            );
-                                          });
-                                        }
-                                      },
-                                      onClicked: () async {
-                                        final liked = await context.push(
-                                          '/postPage/${item.post.id}',
-                                          extra: {
-                                            'post': item.post,
-                                            'country_info': country
-                                          },
-                                        );
-                                        logger.d(liked);
-                                        if (liked == 'liked') {
-                                          item.post.likes =
-                                              item.post.likes! + 1;
-                                        }
-                                        if (liked == 'disliked') {
-                                          item.post.likes =
-                                              item.post.likes! - 1;
-                                        }
-                                        logger.i(item.post.likes);
-                                      },
-                                    );
+                                  onPressed: () {
+                                    searchProvider.refreshParams();
+                                    homeProvider.pagingController.refresh();
                                   },
-                                );
-                              }),
+                                )
+                              ],
+                            ),
+                            firstPageProgressIndicatorBuilder: (context) {
+                              return const CupertinoActivityIndicator();
+                            },
+                            newPageProgressIndicatorBuilder: (context) =>
+                                const CupertinoActivityIndicator(),
+                            itemBuilder: (context, item, index) {
+                              final country = searchProvider.countries
+                                  .fold((l) => null, (r) {
+                                try {
+                                  return r.firstWhere((element) =>
+                                      element.name ==
+                                      item.post.location?.country);
+                                } catch (e) {
+                                  logger.e('element not found');
+                                  return null;
+                                }
+                              });
+                              return Consumer<RealestateAuthProvider>(
+                                builder: (context, authProvider, _) {
+                                  final liked = authProvider.auth?.fold(
+                                    (l) => null,
+                                    (user) =>
+                                        user.likes?.contains(item.post.id),
+                                  );
+
+                                  return PostCard(
+                                    type: UseType.home,
+                                    loading: item.loading,
+                                    isLiked: liked == true,
+                                    countryInfo: country,
+                                    post: item.post,
+                                    //todo fix this shit logic
+                                    onHeartClicked: (postId) {
+                                      if (item.loading) {
+                                        return;
+                                      }
+                                      if (liked == null) {
+                                        //show a dialog
+                                        logger.i('not logged in');
+                                        showCupertinoDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              CupertinoAlertDialog(
+                                            title: const Text('Unauthorized'),
+                                            content: const Text(
+                                              'Please login first !',
+                                            ),
+                                            actions: [
+                                              CupertinoDialogAction(
+                                                onPressed: () => context.pop(),
+                                                child: const Text(
+                                                  'Ok',
+                                                  style: TextStyle(
+                                                    color:
+                                                        CupertinoColors.white,
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        );
+                                      } else if (liked == false) {
+                                        homeProvider.setLoading(true, index);
+                                        authProvider.like(postId,
+                                            onSuccess: () {
+                                          homeProvider.setLoading(false, index);
+                                          authProvider.fetshAuth();
+                                          authProvider.auth?.fold(
+                                            (l) => null,
+                                            (user) => context
+                                                .read<LikedPageProvider>()
+                                                .fetshLikedPosts(user.id),
+                                          );
+                                        });
+                                      } else if (liked == true) {
+                                        homeProvider.setLoading(true, index);
+                                        authProvider.unlike(postId,
+                                            onSuccess: () {
+                                          homeProvider.setLoading(false, index);
+                                          authProvider.fetshAuth();
+                                          authProvider.auth?.fold(
+                                            (l) => null,
+                                            (user) => context
+                                                .read<LikedPageProvider>()
+                                                .fetshLikedPosts(user.id),
+                                          );
+                                        });
+                                      }
+                                    },
+                                    onClicked: () async {
+                                      final liked = await context.push(
+                                        '/postPage/${item.post.id}',
+                                        extra: {
+                                          'post': item.post,
+                                          'country_info': country
+                                        },
+                                      );
+                                      logger.d(liked);
+                                      if (liked == 'liked') {
+                                        item.post.likes = item.post.likes! + 1;
+                                      }
+                                      if (liked == 'disliked') {
+                                        item.post.likes = item.post.likes! - 1;
+                                      }
+                                      logger.i(item.post.likes);
+                                    },
+                                  );
+                                },
+                              );
+                            },
+                          ),
                         ),
                         const SliverToBoxAdapter(
                           child: SizedBox(

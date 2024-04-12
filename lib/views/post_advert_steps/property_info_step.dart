@@ -26,49 +26,59 @@ class PropretyInfoStep extends StatelessWidget {
                     : null,
                 prefix: const Text('Property Type'),
                 child: CupertinoButton(
-                  onPressed: () =>
-                      showPicker(context, provider, availableTypes, 'type',
-                          onClicked: (value) {
-                    if (value != 'Rent') {
-                      provider.data['period'] = null;
-                    }
-                  }),
+                  onPressed: () => showPicker(
+                    context,
+                    provider,
+                    availableTypes,
+                    'type',
+                    onClicked: (value) {
+                      if (value != 'Rent') {
+                        provider.data['period'] = null;
+                      }
+                    },
+                  ),
                   child: Center(
-                      child: Text(provider.data['type'] ?? 'Choose a type')),
+                    child: Text(provider.data['type'] ?? 'Choose a type'),
+                  ),
                 ),
               ),
               CupertinoFormRow(
-                  prefix: const Text('Category'),
-                  error: provider.data['category'] == null
-                      ? const Text('Please choose a category')
-                      : null,
-                  child: Center(
-                    child: CupertinoButton(
-                        child: Text(
-                            provider.data['category'] ?? 'Choose a category'),
-                        onPressed: () {
-                          showCategoryActionSheet(
-                              context, context.read<SearchProvider>(),
-                              (category) {
-                            provider.handleDetails(category);
-                          });
-                        }),
-                  )),
+                prefix: const Text('Category'),
+                error: provider.data['category'] == null
+                    ? const Text('Please choose a category')
+                    : null,
+                child: Center(
+                  child: CupertinoButton(
+                    child:
+                        Text(provider.data['category'] ?? 'Choose a category'),
+                    onPressed: () {
+                      showCategoryActionSheet(
+                        context,
+                        context.read<SearchProvider>(),
+                        (category) {
+                          provider.handleDetails(category);
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ),
               CupertinoFormRow(
-                  error: provider.data['price'].text.isEmpty
-                      ? const Text('Please enter a price')
-                      : null,
-                  prefix: const Text('Price (USD \$)'),
-                  child: CupertinoTextFormFieldRow(
-                    onChanged: (value) => provider.updateNextStatus2(),
-                    placeholder: 'Enter a price',
-                    controller: provider.data['price'],
-                    style: const TextStyle(color: CupertinoColors.systemYellow),
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly
-                    ],
-                    keyboardType: TextInputType.number,
-                  )),
+                error: provider.data['price'].text.isEmpty
+                    ? const Text('Please enter a price')
+                    : null,
+                prefix: const Text('Price (USD \$)'),
+                child: CupertinoTextFormFieldRow(
+                  onChanged: (value) => provider.updateNextStatus2(),
+                  placeholder: 'Enter a price',
+                  controller: provider.data['price'],
+                  style: const TextStyle(color: CupertinoColors.systemYellow),
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
+                  keyboardType: TextInputType.number,
+                ),
+              ),
               CupertinoFormRow(
                 error: provider.data['type'] == 'Rent' &&
                         provider.data['period'] == null
@@ -82,19 +92,21 @@ class PropretyInfoStep extends StatelessWidget {
                         showPicker(context, provider, periods, 'period');
                       } else {
                         showCupertinoDialog(
-                            context: context,
-                            builder: (context) => CupertinoAlertDialog(
-                                  actions: [
-                                    CupertinoDialogAction(
-                                        onPressed: () => context.pop(),
-                                        isDestructiveAction: true,
-                                        child: const Text('Cancel'))
-                                  ],
-                                  content: const Text(
-                                    'Property type is not Rent',
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                ));
+                          context: context,
+                          builder: (context) => CupertinoAlertDialog(
+                            actions: [
+                              CupertinoDialogAction(
+                                onPressed: () => context.pop(),
+                                isDestructiveAction: true,
+                                child: const Text('Cancel'),
+                              )
+                            ],
+                            content: const Text(
+                              'Property type is not Rent',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ),
+                        );
                       }
                     },
                     child: Text(provider.data['period'] ?? 'Choose a Period'),
@@ -103,8 +115,11 @@ class PropretyInfoStep extends StatelessWidget {
               )
             ],
           ),
-          contactInfoSection(provider, context,
-              onChangedPhone: () => provider.updateNextStatus2())
+          contactInfoSection(
+            provider,
+            context,
+            onChangedPhone: () => provider.updateNextStatus2(),
+          )
         ],
       ),
     );

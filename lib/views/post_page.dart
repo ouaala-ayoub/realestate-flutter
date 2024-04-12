@@ -558,7 +558,7 @@ class _PostPageState extends State<PostPage> {
                         ),
                       ),
                       const SliverToBoxAdapter(
-                        child: TitleWidget(text: 'Owner : '),
+                        child: TitleWidget(text: 'Publisher : '),
                       ),
                       const SliverToBoxAdapter(
                         child: SizedBox(
