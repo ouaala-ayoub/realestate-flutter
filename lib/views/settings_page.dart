@@ -8,7 +8,7 @@ import 'package:realestate/views/login_page.dart';
 import 'package:svg_flutter/svg.dart';
 import '../main.dart';
 import '../models/core/post/owner.dart';
-import 'error_widget.dart';
+import 'helper_widgets/error_widget.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});

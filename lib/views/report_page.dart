@@ -6,7 +6,7 @@ import 'package:realestate/models/core/post/owner.dart';
 import 'package:realestate/models/core/report.dart';
 import 'package:realestate/providers/auth_provider.dart';
 import 'package:realestate/providers/report_provider.dart';
-import 'package:realestate/views/error_widget.dart';
+import 'package:realestate/views/helper_widgets/error_widget.dart';
 import 'package:realestate/views/login_page.dart';
 
 class ReportPage extends StatelessWidget {

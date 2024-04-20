@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/auth_provider.dart';
+import '../../providers/auth_provider.dart';
 
 class ErrorScreen extends StatelessWidget {
   final String message;

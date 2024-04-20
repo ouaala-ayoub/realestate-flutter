@@ -10,6 +10,7 @@ import '../main.dart';
 class RealestateAuthProvider extends ChangeNotifier {
   final _helper = AuthHelper();
   bool loading = true;
+  String? error;
   Either<dynamic, RealestateUser>? _auth;
   Either<dynamic, RealestateUser>? get auth => _auth;
   Either<dynamic, RealestateUser>? _loginRes;
@@ -39,7 +40,7 @@ class RealestateAuthProvider extends ChangeNotifier {
       {required Function(RealestateUser) onSuccess,
       required Function(dynamic) onFail}) async {
     final res = await _helper.login(token);
-    res.fold((l) => onFail(l), (r) => onSuccess(r));
+    res.fold(onFail, onSuccess);
   }
 
   unlike(postId, {required Function() onSuccess}) async {
@@ -60,5 +61,10 @@ class RealestateAuthProvider extends ChangeNotifier {
 
   logout() async {
     await const FlutterSecureStorage().delete(key: 'session_cookie');
+  }
+
+  setError(String? e) {
+    error = e;
+    notifyListeners();
   }
 }

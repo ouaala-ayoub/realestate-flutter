@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:realestate/main.dart';
 import 'package:realestate/models/core/post/post.dart';
 import 'package:realestate/providers/posts_list_provider.dart';
-import 'package:realestate/views/error_widget.dart';
-import 'package:realestate/views/post_edit_widget.dart';
-import 'package:realestate/views/post_widget.dart';
+import 'package:realestate/views/helper_widgets/error_widget.dart';
+import 'package:realestate/views/helper_widgets/post_edit_widget.dart';
+import 'package:realestate/views/helper_widgets/post_widget.dart';
 
 import '../providers/search_provider.dart';
 

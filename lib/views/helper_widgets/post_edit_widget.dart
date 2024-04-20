@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:realestate/models/helpers/function_helpers.dart';
-import 'package:realestate/views/post_widget.dart';
-import '../models/core/country.dart';
-import '../models/core/post/post.dart';
+import 'package:realestate/views/helper_widgets/post_widget.dart';
+import '../../models/core/country.dart';
+import '../../models/core/post/post.dart';
 
 class PostEditWidget extends StatelessWidget {
   final Post post;

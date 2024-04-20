@@ -12,7 +12,7 @@ import 'package:realestate/models/core/types.dart';
 import 'package:realestate/providers/auth_provider.dart';
 import 'package:realestate/providers/liked_provider.dart';
 import 'package:realestate/providers/post_page_provider.dart';
-import 'package:realestate/views/error_widget.dart';
+import 'package:realestate/views/helper_widgets/error_widget.dart';
 import 'package:realestate/views/filter_page.dart';
 import 'package:svg_flutter/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -116,7 +116,7 @@ class _PostPageState extends State<PostPage> {
                                 child: Container(
                                   width: 20.0,
                                   height: 20.0,
-                                  child: const CircularProgressIndicator(),
+                                  child: const CupertinoActivityIndicator(),
                                 ),
                               ),
                             ),

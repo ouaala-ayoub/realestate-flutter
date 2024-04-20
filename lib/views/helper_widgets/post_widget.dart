@@ -1,10 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:realestate/models/core/constants.dart';
 import 'package:realestate/models/core/country.dart';
 import 'package:svg_flutter/svg.dart';
-import '../models/core/post/post.dart';
-import '../models/helpers/function_helpers.dart';
+import '../../models/core/post/post.dart';
+import '../../models/helpers/function_helpers.dart';
 
 enum UseType { home, liked, edit }
 
@@ -52,18 +53,24 @@ class PostCard extends StatelessWidget {
             Hero(
               transitionOnUserGestures: true,
               tag: '${post.id}',
-              child: Image.network(
-                // errorBuilder: (holyContext, error, stackTrace) =>
-                //     Center(child: Text('error')),
-                post.media!.isNotEmpty ? post.media![0] : '',
-                errorBuilder: (context, obj, trace) => const SizedBox(
-                  height: 200,
-                  child: Icon(
-                    CupertinoIcons.eye_slash_fill,
-                  ),
-                ), // Replace with your image path
-                height: 200.0, // Adjust the height as needed
-                fit: BoxFit.fitWidth,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(8),
+                  topRight: Radius.circular(8),
+                ),
+                child: CachedNetworkImage(
+                  imageUrl: post.media!.isNotEmpty ? post.media![0] : '',
+                  // errorBuilder: (holyContext, error, stackTrace) =>
+                  //     Center(child: Text('error')),
+                  errorWidget: (context, url, error) => const SizedBox(
+                    height: 200,
+                    child: Icon(
+                      CupertinoIcons.eye_slash_fill,
+                    ),
+                  ), // Replace with your image path
+                  height: 200.0, // Adjust the height as needed
+                  fit: BoxFit.fitWidth,
+                ),
               ),
             ),
             Padding(
@@ -79,29 +86,30 @@ class PostCard extends StatelessWidget {
                     ),
                   ),
                   GestureDetector(
-                      onTap: () {
-                        onHeartClicked?.call(post.id!);
-                      },
-                      child: type == UseType.liked
-                          ? const Icon(
-                              CupertinoIcons.heart_slash_fill,
-                              color: CupertinoColors.white,
-                            )
-                          : type == UseType.home
-                              ? loading == true
-                                  ? const Center(
-                                      child: CupertinoActivityIndicator(),
-                                    )
-                                  : isLiked == true
-                                      ? const Icon(
-                                          CupertinoIcons.heart_slash_fill,
-                                          color: CupertinoColors.white,
-                                        )
-                                      : const Icon(
-                                          CupertinoIcons.heart,
-                                          color: CupertinoColors.white,
-                                        )
-                              : Container())
+                    onTap: () {
+                      onHeartClicked?.call(post.id!);
+                    },
+                    child: type == UseType.liked
+                        ? const Icon(
+                            CupertinoIcons.heart_slash_fill,
+                            color: CupertinoColors.white,
+                          )
+                        : type == UseType.home
+                            ? loading == true
+                                ? const Center(
+                                    child: CupertinoActivityIndicator(),
+                                  )
+                                : isLiked == true
+                                    ? const Icon(
+                                        CupertinoIcons.heart_slash_fill,
+                                        color: CupertinoColors.white,
+                                      )
+                                    : const Icon(
+                                        CupertinoIcons.heart,
+                                        color: CupertinoColors.white,
+                                      )
+                            : Container(),
+                  )
                 ],
               ),
             ),

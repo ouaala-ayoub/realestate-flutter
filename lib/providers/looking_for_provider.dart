@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:realestate/models/helpers/posts_helper.dart';
 import 'package:realestate/providers/search_provider.dart';
-import 'package:realestate/views/loader_provider.dart';
-import 'package:realestate/views/looking_for_advert.dart';
+import 'package:realestate/providers/loader_provider.dart';
+import 'package:realestate/views/looking_for_advert_steps/looking_for_advert.dart';
 import 'package:realestate/views/post_advert_steps/location_step.dart';
 
 class LookingForProvider extends LoaderProvider {
@@ -19,11 +19,13 @@ class LookingForProvider extends LoaderProvider {
 
   final List<Widget> _steps = [
     const LookingForAdvertStepOne(),
-    Consumer<LookingForProvider>(builder: ((context, provider, child) {
-      final searchProvider = context.read<SearchProvider>();
-      return LocationStepBody(
-          searchProvider: searchProvider, loaderProvider: provider);
-    }))
+    Consumer<LookingForProvider>(
+      builder: ((context, provider, child) {
+        final searchProvider = context.read<SearchProvider>();
+        return LocationStepBody(
+            searchProvider: searchProvider, loaderProvider: provider);
+      }),
+    )
   ];
   @override
   List<Widget> get steps => _steps;

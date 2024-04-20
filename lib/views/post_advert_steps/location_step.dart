@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:realestate/models/helpers/function_helpers.dart';
 import 'package:realestate/providers/search_provider.dart';
-import 'package:realestate/views/loader_provider.dart';
+import 'package:realestate/providers/loader_provider.dart';
 
 class LocationStepBody extends StatelessWidget {
   final LoaderProvider loaderProvider;

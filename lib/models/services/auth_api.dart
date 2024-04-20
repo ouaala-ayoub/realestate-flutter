@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:realestate/main.dart';
 import 'package:realestate/models/core/constants.dart';
 
 class AuthApi {
@@ -7,8 +8,13 @@ class AuthApi {
   Future<dynamic> getAuth() async {
     final endpoint = '$baseWebsiteUrl/auth';
     final cookie = await _storage.read(key: 'session_cookie');
-    final res = await Dio().post(endpoint,
-        options: Options(headers: {'Cookie': 'session=$cookie'}));
+    logger.i(cookie);
+    final res = await Dio().post(
+      endpoint,
+      options: Options(
+        headers: {'Cookie': 'session=$cookie'},
+      ),
+    );
     return res.data;
   }
 

@@ -24,7 +24,7 @@ import 'package:realestate/views/post_page.dart';
 import 'package:realestate/views/profile_page.dart';
 import 'package:realestate/views/report_page.dart';
 import 'package:realestate/views/settings_page.dart';
-import 'package:realestate/views/shared_post_advert_stepper.dart';
+import 'package:realestate/views/helper_widgets/shared_post_advert_stepper.dart';
 import 'firebase_options.dart';
 import 'providers/post_advert_provider.dart';
 import 'views/main_page.dart';

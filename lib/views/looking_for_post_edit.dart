@@ -6,7 +6,7 @@ import 'package:realestate/main.dart';
 import 'package:realestate/models/helpers/function_helpers.dart';
 import 'package:realestate/providers/looking_for_edit_provider.dart';
 import 'package:realestate/providers/search_provider.dart';
-import 'package:realestate/views/error_widget.dart';
+import 'package:realestate/views/helper_widgets/error_widget.dart';
 import 'package:svg_flutter/svg_flutter.dart';
 
 class LookingForPostEdit extends StatefulWidget {

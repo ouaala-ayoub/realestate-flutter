@@ -5,8 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:realestate/models/core/constants.dart';
 import 'package:realestate/models/helpers/function_helpers.dart';
 import 'package:realestate/providers/post_advert_provider.dart';
-import '../double_text_field.dart';
-import '../feature_widget.dart';
+import '../helper_widgets/double_text_field.dart';
+import '../helper_widgets/feature_widget.dart';
 
 class DetailsStep extends StatelessWidget {
   const DetailsStep({super.key});

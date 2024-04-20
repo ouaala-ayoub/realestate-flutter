@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:realestate/models/core/types.dart';
 import 'package:realestate/models/helpers/posts_helper.dart';
 import 'package:realestate/providers/search_provider.dart';
-import 'package:realestate/views/loader_provider.dart';
+import 'package:realestate/providers/loader_provider.dart';
 import 'package:realestate/views/post_advert_steps/details_step.dart';
 import '../main.dart';
 import '../views/post_advert_steps/images_step.dart';

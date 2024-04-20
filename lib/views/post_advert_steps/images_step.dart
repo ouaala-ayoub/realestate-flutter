@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:realestate/providers/post_advert_provider.dart';
-import 'package:realestate/views/images_selected_widget.dart';
+import 'package:realestate/views/helper_widgets/images_selected_widget.dart';
 import '../../models/core/constants.dart';
 
 class PostAdvertImagesStep extends StatelessWidget {

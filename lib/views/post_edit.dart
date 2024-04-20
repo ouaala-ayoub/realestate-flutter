@@ -8,9 +8,9 @@ import 'package:realestate/models/core/types.dart';
 import 'package:realestate/models/helpers/function_helpers.dart';
 import 'package:realestate/providers/post_edit_provider.dart';
 import 'package:realestate/providers/search_provider.dart';
-import 'package:realestate/views/double_text_field.dart';
-import 'package:realestate/views/error_widget.dart';
-import 'package:realestate/views/feature_widget.dart';
+import 'package:realestate/views/helper_widgets/double_text_field.dart';
+import 'package:realestate/views/helper_widgets/error_widget.dart';
+import 'package:realestate/views/helper_widgets/feature_widget.dart';
 import 'package:svg_flutter/svg.dart';
 
 class PostEditPage extends StatefulWidget {
@@ -36,14 +36,15 @@ class _PostEditPageState extends State<PostEditPage> {
       ),
       child: SafeArea(
         child: Consumer<PostEditProvider>(
-            builder: (context, provider, _) => provider.loading
-                ? const Center(
-                    child: CupertinoActivityIndicator(),
-                  )
-                : provider.post.fold(
-                    (l) => ErrorScreen(
-                        refreshFunction: provider.fetshPost(widget.postId),
-                        message: 'Error getting post data'), (post) {
+          builder: (context, provider, _) => provider.loading
+              ? const Center(
+                  child: CupertinoActivityIndicator(),
+                )
+              : provider.post.fold(
+                  (l) => ErrorScreen(
+                      refreshFunction: provider.fetshPost(widget.postId),
+                      message: 'Error getting post data'),
+                  (post) {
                     if (provider.firstTime) {
                       provider.postBuilder = post.toMap()
                         ..removeWhere((key, value) => value == null);
@@ -508,47 +509,47 @@ class _PostEditPageState extends State<PostEditPage> {
                                                 const Text('Modify features'),
                                             onPressed: () {
                                               showCupertinoModalPopup(
-                                                  context: context,
-                                                  builder:
-                                                      (context) =>
-                                                          CupertinoActionSheet(
-                                                            title: const Text(
-                                                              'Please Check the features your property have !',
-                                                              style: TextStyle(
-                                                                  fontSize: 18,
-                                                                  color:
-                                                                      CupertinoColors
-                                                                          .white),
-                                                            ),
-                                                            cancelButton:
-                                                                CupertinoButton(
-                                                                    child:
-                                                                        const Text(
-                                                                      'Done',
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                              CupertinoColors.activeGreen),
-                                                                    ),
-                                                                    onPressed: () =>
-                                                                        context.pop(
-                                                                            ())),
-                                                            actions: landMarks
-                                                                .entries
-                                                                .map((entry) => FeatureWidget(
-                                                                    isChecked: provider.postBuilder[
-                                                                            'features']
-                                                                        .contains(entry
-                                                                            .key),
-                                                                    svgPath: entry
-                                                                        .value,
-                                                                    featureText:
-                                                                        entry
-                                                                            .key,
-                                                                    onChecked: (checked) =>
-                                                                        provider
-                                                                            .handleFeature(entry.key)))
-                                                                .toList(),
-                                                          ));
+                                                context: context,
+                                                builder: (context) =>
+                                                    CupertinoActionSheet(
+                                                  title: const Text(
+                                                    'Please Check the features your property have !',
+                                                    style: TextStyle(
+                                                        fontSize: 18,
+                                                        color: CupertinoColors
+                                                            .white),
+                                                  ),
+                                                  cancelButton: CupertinoButton(
+                                                      child: const Text(
+                                                        'Done',
+                                                        style: TextStyle(
+                                                            color: CupertinoColors
+                                                                .activeGreen),
+                                                      ),
+                                                      onPressed: () =>
+                                                          context.pop(())),
+                                                  actions: landMarks.entries
+                                                      .map(
+                                                        (entry) =>
+                                                            FeatureWidget(
+                                                          isChecked: provider
+                                                              .postBuilder[
+                                                                  'features']
+                                                              .contains(
+                                                                  entry.key),
+                                                          svgPath: entry.value,
+                                                          featureText:
+                                                              entry.key,
+                                                          onChecked: (checked) =>
+                                                              provider
+                                                                  .handleFeature(
+                                                                      entry
+                                                                          .key),
+                                                        ),
+                                                      )
+                                                      .toList(),
+                                                ),
+                                              );
                                             },
                                           ),
                                         ),
@@ -556,7 +557,7 @@ class _PostEditPageState extends State<PostEditPage> {
                                           height: 10,
                                         )
                                       ])
-                                    : const SizedBox(),
+                                    : const SizedBox.shrink(),
                               ],
                             ),
                           ),
@@ -613,7 +614,9 @@ class _PostEditPageState extends State<PostEditPage> {
                         ],
                       ),
                     );
-                  })),
+                  },
+                ),
+        ),
       ),
     );
   }

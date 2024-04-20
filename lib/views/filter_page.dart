@@ -7,7 +7,7 @@ import 'package:realestate/models/core/price_filter.dart';
 import 'package:realestate/models/helpers/function_helpers.dart';
 import '../models/core/types.dart';
 import '../providers/search_provider.dart';
-import 'feature_widget.dart';
+import 'helper_widgets/feature_widget.dart';
 
 class FilterPage extends StatefulWidget {
   const FilterPage({super.key});

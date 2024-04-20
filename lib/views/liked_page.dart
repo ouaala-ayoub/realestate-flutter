@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:realestate/providers/home_page_provider.dart';
 import 'package:realestate/providers/liked_provider.dart';
 import 'package:realestate/providers/search_provider.dart';
-import 'package:realestate/views/error_widget.dart';
-import 'package:realestate/views/post_widget.dart';
+import 'package:realestate/views/helper_widgets/error_widget.dart';
+import 'package:realestate/views/helper_widgets/post_widget.dart';
 
 import '../main.dart';
 import '../providers/auth_provider.dart';
@@ -33,6 +33,7 @@ class LikedPage extends StatelessWidget {
                       sourceRoute: '/',
                     );
                   } else {
+                    logger.e(error);
                     return ErrorScreen(
                       message: 'Unexpected error',
                       refreshFunction: () => provider.fetshLateAuth(),

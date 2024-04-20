@@ -9,7 +9,7 @@ import 'package:realestate/providers/auth_provider.dart';
 import 'package:realestate/providers/home_page_provider.dart';
 import 'package:realestate/providers/liked_provider.dart';
 import 'package:realestate/providers/search_provider.dart';
-import 'package:realestate/views/post_widget.dart';
+import 'package:realestate/views/helper_widgets/post_widget.dart';
 import '../models/helpers/function_helpers.dart';
 
 class HomePage extends StatefulWidget {
@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext buildContext) {
-    final url = dotenv.env['WEBSITE_URL'];
+    final url = dotenv.env['WEBSITE_URL'].toString();
     return Consumer<HomePageProvider>(
       builder: (context, homeProvider, child) => Consumer<SearchProvider>(
         builder: (context, searchProvider, child) => CupertinoPageScaffold(
@@ -68,13 +68,13 @@ class _HomePageState extends State<HomePage> {
             middle: GestureDetector(
               onTap: () async {
                 try {
-                  launchWebSite(url.toString());
+                  launchWebSite(url);
                 } catch (e) {
                   logger.e('message');
                 }
               },
               child: Text(
-                url.toString(),
+                url,
                 style: const TextStyle(overflow: TextOverflow.ellipsis),
               ),
             ),
@@ -114,8 +114,9 @@ class _HomePageState extends State<HomePage> {
                         searchProvider.setSelectedType(value);
                         searchProvider.searchParams.page = 1;
                         homeProvider.pagingController.refresh();
-                        logger
-                            .i(searchProvider.searchParams.toMap().toString());
+                        logger.i(
+                          searchProvider.searchParams.toMap().toString(),
+                        );
                       }
                       // homeProvider.getPosts(searchProvider.searchParams);
                     },
@@ -196,7 +197,7 @@ class _HomePageState extends State<HomePage> {
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Image.network(
-                                              'https://properties-realestate.vercel.app/${news.image}',
+                                              '${dotenv.env['WEBSITE_URL']}${news.image}',
                                               // loadingBuilder: (context, child,
                                               //         loadingProgress) =>
                                               //     CupertinoActivityIndicator(),
@@ -228,24 +229,24 @@ class _HomePageState extends State<HomePage> {
                           child: Padding(
                             padding: const EdgeInsets.only(left: 5, right: 5),
                             child: chooseButton(
-                                'category',
-                                () => showCategoryActionSheet(
-                                        context, searchProvider, (category) {
-                                      searchProvider
-                                          .setSelectedCategory(category);
-                                      searchProvider.searchParams.page = 1;
-                                      homeProvider.pagingController.refresh();
-                                    }),
-                                context,
-                                searchProvider.searchParams.category,
-                                onClearClicked: () {
-                              if (searchProvider.searchParams.category !=
-                                  null) {
-                                searchProvider.setSelectedCategory(null);
+                              'category',
+                              () => showCategoryActionSheet(
+                                  context, searchProvider, (category) {
+                                searchProvider.setSelectedCategory(category);
                                 searchProvider.searchParams.page = 1;
                                 homeProvider.pagingController.refresh();
-                              }
-                            }),
+                              }),
+                              context,
+                              searchProvider.searchParams.category,
+                              onClearClicked: () {
+                                if (searchProvider.searchParams.category !=
+                                    null) {
+                                  searchProvider.setSelectedCategory(null);
+                                  searchProvider.searchParams.page = 1;
+                                  homeProvider.pagingController.refresh();
+                                }
+                              },
+                            ),
                           ),
                         ),
                         SliverToBoxAdapter(
@@ -278,17 +279,19 @@ class _HomePageState extends State<HomePage> {
                                   height: 10,
                                 ),
                                 CupertinoButton.filled(
-                                    child: const Text('Refresh'),
-                                    onPressed: () {
-                                      context
-                                          .read<RealestateAuthProvider>()
-                                          .fetshLateAuth();
-                                      searchProvider.getCountries();
-                                      searchProvider.getCategories();
-                                      homeProvider.getNews();
-                                      homeProvider.getPosts(
-                                          searchProvider.searchParams);
-                                    }),
+                                  child: const Text('Refresh'),
+                                  onPressed: () {
+                                    context
+                                        .read<RealestateAuthProvider>()
+                                        .fetshLateAuth();
+                                    searchProvider.getCountries();
+                                    searchProvider.getCategories();
+                                    homeProvider.getNews();
+                                    homeProvider.getPosts(
+                                      searchProvider.searchParams,
+                                    );
+                                  },
+                                ),
                               ],
                             ),
                             noItemsFoundIndicatorBuilder: (context) => Column(
@@ -379,17 +382,20 @@ class _HomePageState extends State<HomePage> {
                                         );
                                       } else if (liked == false) {
                                         homeProvider.setLoading(true, index);
-                                        authProvider.like(postId,
-                                            onSuccess: () {
-                                          homeProvider.setLoading(false, index);
-                                          authProvider.fetshAuth();
-                                          authProvider.auth?.fold(
-                                            (l) => null,
-                                            (user) => context
-                                                .read<LikedPageProvider>()
-                                                .fetshLikedPosts(user.id),
-                                          );
-                                        });
+                                        authProvider.like(
+                                          postId,
+                                          onSuccess: () {
+                                            homeProvider.setLoading(
+                                                false, index);
+                                            authProvider.fetshAuth();
+                                            authProvider.auth?.fold(
+                                              (l) => null,
+                                              (user) => context
+                                                  .read<LikedPageProvider>()
+                                                  .fetshLikedPosts(user.id),
+                                            );
+                                          },
+                                        );
                                       } else if (liked == true) {
                                         homeProvider.setLoading(true, index);
                                         authProvider.unlike(postId,

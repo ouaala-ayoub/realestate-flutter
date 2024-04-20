@@ -64,7 +64,7 @@ dependencies:
   # uni_links : 
     
 flutter_launcher_icons:
-  image_path: "assets/icons/launcher_icon.jpg"
+  image_path: "assets/icons/launcher_icon.png"
   android: true
   ios: true
 
