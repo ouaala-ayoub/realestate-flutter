@@ -9,7 +9,9 @@ import 'package:realestate/providers/auth_provider.dart';
 import 'package:realestate/providers/home_page_provider.dart';
 import 'package:realestate/providers/liked_provider.dart';
 import 'package:realestate/providers/search_provider.dart';
+import 'package:realestate/views/helper_widgets/error_widget.dart';
 import 'package:realestate/views/helper_widgets/post_widget.dart';
+import 'package:realestate/views/helper_widgets/single_news.dart';
 import '../models/helpers/function_helpers.dart';
 
 class HomePage extends StatefulWidget {
@@ -33,6 +35,7 @@ class _HomePageState extends State<HomePage> {
     homeProvider.pagingController.addPageRequestListener((pageKey) {
       homeProvider.getPosts(searchProvider.searchParams);
     });
+    // homeProvider.startAutoScroll(300);
     super.initState();
   }
 
@@ -162,9 +165,10 @@ class _HomePageState extends State<HomePage> {
                             child: Text(
                               'Latest News',
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: CupertinoTheme.of(buildContext)
-                                      .primaryColor),
+                                fontWeight: FontWeight.bold,
+                                color: CupertinoTheme.of(buildContext)
+                                    .primaryColor,
+                              ),
                             ),
                           ),
                         ),
@@ -173,57 +177,31 @@ class _HomePageState extends State<HomePage> {
                             height: 10,
                           ),
                         ),
-                        SliverList.list(
-                          children: [
-                            homeProvider.newsLoading
-                                ? const Center(
-                                    child: CupertinoActivityIndicator(),
-                                  )
-                                : homeProvider.news.fold(
-                                    (e) => const Center(
-                                      child: Text('Unexpected error'),
-                                    ),
-                                    (news) => ListView.builder(
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      shrinkWrap: true,
-                                      itemCount: 1,
-                                      // itemCount: news.length,
-                                      itemBuilder: (context, index) {
-                                        //todo change this
-                                        return Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Image.network(
-                                              '${dotenv.env['WEBSITE_URL']}${news.image}',
-                                              // loadingBuilder: (context, child,
-                                              //         loadingProgress) =>
-                                              //     CupertinoActivityIndicator(),
+                        SliverToBoxAdapter(
+                          child: homeProvider.newsLoading
+                              ? const Center(
+                                  child: CupertinoActivityIndicator(),
+                                )
+                              : homeProvider.news.fold(
+                                  (e) => ErrorScreen(
+                                    refreshFunction: () async =>
+                                        await homeProvider.getNews(),
+                                    message: 'Unexpected error',
+                                  ),
+                                  (news) => SingleChildScrollView(
+                                    physics: const PageScrollPhysics(),
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      children: news
+                                          .map(
+                                            (singleNews) => SingleNews(
+                                              news: singleNews,
                                             ),
-                                            const SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text(
-                                              '${news.title}',
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            const SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text(
-                                              news.contents!.join('\n'),
-                                              style:
-                                                  const TextStyle(fontSize: 14),
-                                            )
-                                          ],
-                                        );
-                                      },
+                                          )
+                                          .toList(),
                                     ),
                                   ),
-                          ],
+                                ),
                         ),
                         SliverToBoxAdapter(
                           child: Padding(

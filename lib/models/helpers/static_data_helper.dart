@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:realestate/main.dart';
-import 'package:realestate/models/core/lates_news.dart';
+import 'package:realestate/models/core/news.dart';
 import 'package:realestate/models/helpers/function_helpers.dart';
 import 'package:realestate/models/services/static_data_api.dart';
 import '../core/country.dart';
@@ -20,12 +20,12 @@ class StaticDataHelper {
     });
   }
 
-  Future<Either<dynamic, LatesNews>> getNews() async {
+  Future<Either<dynamic, List<News>>> getNews() async {
     final res = await _api.getNews();
     return res.fold((l) {
       return Left(l);
-    }, (r) {
-      return Right(LatesNews.fromMap(r));
+    }, (res) {
+      return Right(res.map((item) => News.fromMap(item)).toList());
     });
   }
 

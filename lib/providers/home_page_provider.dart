@@ -1,10 +1,9 @@
 import 'package:dartz/dartz.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:realestate/main.dart';
-import 'package:realestate/models/core/lates_news.dart';
+import 'package:realestate/models/core/news.dart';
 import 'package:realestate/models/core/post/post.dart';
 import 'package:realestate/models/core/price_filter.dart';
 import 'package:realestate/models/helpers/posts_helper.dart';
@@ -12,11 +11,11 @@ import 'package:realestate/models/helpers/static_data_helper.dart';
 import '../models/core/search_params.dart';
 
 class HomePageProvider extends ChangeNotifier {
-  static List<CancelToken> tokens = [];
   static const _pageSize = 20;
   final _helper = StaticDataHelper();
   final _postsHelper = PostsHelper();
-  final ScrollController scrollController = ScrollController();
+
+  final scrollController = ScrollController();
 
   final PagingController<int, PostAndLoading> _pagingController =
       PagingController(firstPageKey: 1);
@@ -26,7 +25,7 @@ class HomePageProvider extends ChangeNotifier {
   bool newsLoading = false;
   bool postsLoading = false;
 
-  Either<dynamic, LatesNews> news = Right(LatesNews());
+  Either<dynamic, List<News>> news = Right([News()]);
 
   unlikeLocaly(String postId) {
     final index = pagingController.itemList

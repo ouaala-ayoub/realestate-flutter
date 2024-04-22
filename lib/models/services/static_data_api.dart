@@ -25,7 +25,7 @@ class StaticDataApi {
     }
   }
 
-  Future<Either<dynamic, dynamic>> getNews() async {
+  Future<Either<dynamic, List<dynamic>>> getNews() async {
     try {
       final endpoint = '$baseWebsiteUrl/news';
       final res = await Dio().get(endpoint);
